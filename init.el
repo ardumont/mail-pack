@@ -1,5 +1,8 @@
 (require 'gnus)
 
+;; adding the creds.el lib
+(live-add-pack-lib "creds.el")
+
 ;; got this line from one of the tutorials. Seemed interesting enough
 (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 
@@ -27,11 +30,21 @@
 (setq gnus-summary-thread-gathering-function
       'gnus-gather-threads-by-subject)
 
+;; load the entry imap.gmail.com in the ~/.netrc, we obtain a hash-map with the needed data
+(setq description (get-creds (read-lines "~/.authinfo") "description"))
+
+(setq full-name (concat (get-entry description "firstname") " "
+                        (get-entry description "surname") " "
+                        (get-entry description "name")))
+
+(setq x-url (get-entry description "x-url"))
+(setq mail-address (get-entry description "mail"))
+(setq mail-host (get-entry description "mail-host"))
+
 (setq gnus-posting-styles
        '((".*"
-          (name "Antoine R. Dumont")
-          ("X-URL" "http://adumont.fr/blog/"))))
+          (name full-name)
+          ("X-URL" x-url)
+          (mail-host-address mail-host))))
 
-(setq full-name "Antoine R. Dumont")
-(setq mail-address "eniotna.t@gmail.com")
 (setq send-mail-function 'smtpmail-send-it)
