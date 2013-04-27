@@ -1,4 +1,5 @@
 (require 'gnus)
+(require 'creds)
 
 ;; adding the creds.el lib
 (live-add-pack-lib "creds.el")
