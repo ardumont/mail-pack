@@ -34,3 +34,10 @@ machine description tony Login romain Surname dumont x-url http://adumont.fr/blo
 # run
 
 `M-x gnus`
+
+# Important note
+
+- `gnus` will download a lot of stuff (approx 10 megabytes for me) the first time you use it with your user account
+- **If you don't quit properly** it will download everything at each session!
+- By quitting properly it will download only the "delta" between the previous session and the new one (a few kilobytes)
+- Quitting properly: `q` by default (`M-x gnus-group-exit`)
