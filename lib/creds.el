@@ -32,10 +32,10 @@
             d
           (get-creds (cdr data) entry-name)))))
 
-;;(get-creds dat "machine0")
+;; (get-creds dat "machine0")
 ;; ("machine" "machine0" "port" "http" "login" "nouser" "password" "nopass")
 
-;;(get-creds da "nil")
+;; (get-creds dat "nil")
 ;; nil
 
 (defun get-entry (data entry)
@@ -46,6 +46,7 @@
         (if (equal k entry)
             v
           (get-entry (cddr data) entry)))))
+
 ;; (setq machine (get-creds dat "machine0"))
 ;; (get-entry machine "machine")
 ;; "machine0"
