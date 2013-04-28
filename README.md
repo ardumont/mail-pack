@@ -34,3 +34,10 @@ machine description tony Login romain Surname dumont x-url http://adumont.fr/blo
 # run
 
 `M-x gnus`
+
+# Important note
+
+- **You need to do a clean exit of `gnus`!**
+- If you don't, it will do an "initial download" of your emails at each new session (approx 10 megabytes for me).
+- But with a "clean exit" only the delta (a few kilobytes) will be downloaded between the current and previous session.
+- "Clean exit": `q` by default (`M-x gnus-group-exit`)
