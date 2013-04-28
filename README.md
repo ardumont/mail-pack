@@ -8,7 +8,7 @@ This is using gnus - http://www.emacswiki.org/cgi-bin/wiki/GnusGmail.
 
 In your `.emacs-live.el` add this snippet:
 ```elisp
-(live-add-packs '(mail-pack))
+(live-add-packs '("/path/to/mail-pack"))
 ```
 
 # Setup
