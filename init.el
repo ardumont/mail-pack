@@ -11,11 +11,10 @@
 
 (defun mail-pack/--setup-possible-p (creds-file) "Check if the setup is possible by checking the existence of the file creds-file and that the entry 'description' is provided."
   (if (file-exists-p creds-file)
-      (let ((parsed-lines (read-lines creds-file)))
-        ;; load the entry imap.gmail.com in the ~/.netrc, we obtain a hash-map with the needed data
-        (and (get-creds parsed-lines "imap.gmail.com")
-             (get-creds parsed-lines "smtp.gmail.com")
-             (get-creds parsed-lines "description")))))
+      (let ((parsed-lines (creds/read-lines creds-file)))
+        (and (creds/get parsed-lines "imap.gmail.com")
+             (creds/get parsed-lines "smtp.gmail.com")
+             (creds/get parsed-lines "description")))))
 
 (defun mail-pack/--setup (creds-file) ""
   ;; got this line from one of the tutorials. Seemed interesting enough
@@ -45,15 +44,13 @@
   (setq gnus-summary-thread-gathering-function
         'gnus-gather-threads-by-subject)
 
-  (setq description (get-creds (read-lines creds-file) "description"))
+  (setq description (creds/get (creds/read-lines creds-file) "description"))
 
-  (setq full-name (concat (get-entry description "firstname") " "
-                          (get-entry description "surname") " "
-                          (get-entry description "name")))
+  (setq full-name (format "%s %s %s" (creds/get-entry description "firstname") (creds/get-entry description "surname") (creds/get-entry description "name")))
 
-  (setq x-url (get-entry description "x-url"))
-  (setq mail-address (get-entry description "mail"))
-  (setq mail-host (get-entry description "mail-host"))
+  (setq x-url        (creds/get-entry description "x-url"))
+  (setq mail-address (creds/get-entry description "mail"))
+  (setq mail-host    (creds/get-entry description "mail-host"))
 
   (setq gnus-posting-styles
         '((".*"
