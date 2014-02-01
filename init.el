@@ -3,12 +3,11 @@
 
 ;; ===================== setup file
 
-(setq mail-pack--credentials-file "~/.authinfo")
+(defvar *MAIL-PACK-CREDENTIALS-FILE* "~/.authinfo")
 
 ;; ===================== setup function
 
-(defun mail-pack--setup-possible-p (creds-file)
-  "Check if the setup is possible by checking the existence of the file creds-file and that the entry 'description' is provided."
+(defun mail-pack/--setup-possible-p (creds-file) "Check if the setup is possible by checking the existence of the file creds-file and that the entry 'description' is provided."
   (if (file-exists-p creds-file)
       (let ((parsed-lines (read-lines creds-file)))
         ;; load the entry imap.gmail.com in the ~/.netrc, we obtain a hash-map with the needed data
@@ -20,6 +19,7 @@
   ;; adding the creds.el lib
   (live-add-pack-lib "creds.el")
 
+(defun mail-pack/--setup (creds-file) ""
   ;; got this line from one of the tutorials. Seemed interesting enough
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 
@@ -67,13 +67,13 @@
 
 ;; ===================== setup routine
 
-(if (mail-pack--setup-possible-p mail-pack--credentials-file)
+(if (mail-pack/--setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*)
     (progn
-      (message (concat mail-pack--credentials-file " found! Running Setup..."))
-      (mail-pack--setup mail-pack--credentials-file)
+      (message (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
+      (mail-pack/--setup *MAIL-PACK-CREDENTIALS-FILE*)
       (message "Setup done!"))
-  (message (concat "You need to setup the credentials file " mail-pack--credentials-file " for this to work.\n"
-                   "Here is the needed content to setup to your need into '" mail-pack--credentials-file "':\n"
+  (message (concat "You need to setup the credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work.\n"
+                   "Here is a sample content to setup to your need into '" *MAIL-PACK-CREDENTIALS-FILE* "':\n"
                    "machine imap.gmail.com login <your-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
                    "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
                    "machine description firstname <firstname> surname <surname> name <name> x-url <some-url> mail <your-email> mail-host <your-mail-host>\n")))
