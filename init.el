@@ -9,14 +9,17 @@
 
 ;; ===================== setup function
 
-(defun mail-pack/--setup-possible-p (creds-file) "Check if the setup is possible by checking the existence of the file creds-file and that the entries 'imap.gmail.com', 'smtp.gmail.com', and 'description' are provided."
+(defun mail-pack/log (str) "A log function for the pack."
+  (message "Mail Pack - %s" str))
+
+(defun mail-pack/setup-possible-p (creds-file) "Check if the setup is possible by checking the existence of the file creds-file and that the entries 'imap.gmail.com', 'smtp.gmail.com', and 'description' are provided."
   (if (file-exists-p creds-file)
       (let ((parsed-lines (creds/read-lines creds-file)))
         (and (creds/get parsed-lines "imap.gmail.com")
              (creds/get parsed-lines "smtp.gmail.com")
              (creds/get parsed-lines "description")))))
 
-(defun mail-pack/--setup (creds-file) "My default gnus setup."
+(defun mail-pack/setup (creds-file) "My default gnus setup."
   ;; got this line from one of the tutorials. Seemed interesting enough
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 
@@ -59,12 +62,12 @@
 
 ;; ===================== setup routine
 
-(if (mail-pack/--setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*)
+(if (mail-pack/setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*)
     (progn
-      (message (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
-      (mail-pack/--setup *MAIL-PACK-CREDENTIALS-FILE*)
-      (message "Mail Pack - Setup done!"))
-  (message (concat "You need to setup the credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work.\n"
+      (mail-pack/log (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
+      (mail-pack/setup *MAIL-PACK-CREDENTIALS-FILE*)
+      (mail-pack/log "Setup done!"))
+  (mail-pack/log (concat "You need to setup the credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work.\n"
                    "Here is a sample content to setup to your need into '" *MAIL-PACK-CREDENTIALS-FILE* "':\n"
                    "machine imap.gmail.com login <your-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
                    "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
