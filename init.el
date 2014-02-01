@@ -1,4 +1,6 @@
 (require 'gnus)
+
+(live-add-pack-lib "creds.el")
 (require 'creds)
 
 ;; ===================== setup file
@@ -14,10 +16,6 @@
         (and (get-creds parsed-lines "imap.gmail.com")
              (get-creds parsed-lines "smtp.gmail.com")
              (get-creds parsed-lines "description")))))
-
-(defun mail-pack--setup (creds-file)
-  ;; adding the creds.el lib
-  (live-add-pack-lib "creds.el")
 
 (defun mail-pack/--setup (creds-file) ""
   ;; got this line from one of the tutorials. Seemed interesting enough
