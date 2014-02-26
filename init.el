@@ -1,6 +1,6 @@
-(require 'gnus)
+(install-packs '(creds))
 
-(live-add-pack-lib "creds.el")
+(require 'gnus)
 (require 'creds)
 
 ;; ===================== setup file
