@@ -1,3 +1,9 @@
+;;; mail-pack.el --- mail-pack
+
+;;; Commentary:
+
+;;; Code:
+
 (install-packs '(creds))
 
 (require 'gnus)
@@ -72,3 +78,5 @@
                    "machine imap.gmail.com login <your-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
                    "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
                    "machine description firstname <firstname> surname <surname> name <name> x-url <some-url> mail <your-email> mail-host <your-mail-host>\n")))
+
+;;; mail-pack.el ends here
