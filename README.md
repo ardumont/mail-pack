@@ -4,11 +4,22 @@ mail-pack
 Pack to setup one's client mail for gmail.
 This is using gnus - http://www.emacswiki.org/cgi-bin/wiki/GnusGmail.
 
-# install
+# Install
 
-In your `.emacs-live.el` add this snippet:
+This is compatible with [emacs-live-packs](https://github.com/ardumont/emacs-live-packs) and [prelude-packs](https://github.com/ardumont/prelude-packs).
+
+## [emacs-live-packs](https://github.com/ardumont/emacs-live-packs)
+
+Add this snippet in your `.emacs-live.el`:
 ```elisp
-(live-add-packs '("/path/to/mail-pack"))
+(emacs-live-packs/add-live-packs "~/.emacs-live-packs/" '("mail-pack"))
+```
+
+## [prelude-packs](https://github.com/ardumont/prelude-packs)
+
+Add this snippet in your `prelude-packs.el`:
+```elisp
+(prelude-packs/load-packs "~/.prelude-packs/" '("mail-pack"))
 ```
 
 # Setup
