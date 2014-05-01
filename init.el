@@ -62,10 +62,13 @@
   (setq mail-address (creds/get-entry description "mail"))
   (setq mail-host    (creds/get-entry description "mail-host"))
 
-  (setq gnus-posting-styles '((".*"
-                               (name full-name)
-                               ("X-URL" x-url)
-                               (mail-host-address mail-host))))
+  (setq user-mail-address mail-address)
+  (setq user-full-name    full-name)
+
+  (setq gnus-posting-styles `((".*"
+                               (name ,full-name)
+                               ("X-URL" ,x-url)
+                               (mail-host-address ,mail-host))))
 
   (setq send-mail-function 'smtpmail-send-it))
 
