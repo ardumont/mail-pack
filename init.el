@@ -25,16 +25,19 @@
              (creds/get parsed-lines "smtp.gmail.com")
              (creds/get parsed-lines "description")))))
 
-(defun mail-pack/setup (creds-file) "My default gnus setup."
+(defun mail-pack/setup (creds-file)
+  "My default gnus setup."
   ;; got this line from one of the tutorials. Seemed interesting enough
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 
+  ;; IMAP setup
   ;; standard way of getting imap going
   (setq gnus-select-method '(nnimap "gmail"
                                     (nnimap-address "imap.gmail.com")
                                     (nnimap-server-port 993)
                                     (nnimap-stream ssl)))
 
+  ;; SMTP setup
   ;; set up smtp so we can send from gmail too:
   (setq message-send-mail-function    'smtpmail-send-it
         smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
