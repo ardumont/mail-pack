@@ -28,7 +28,7 @@
 ;; ===================== setup file
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
-(defvar *MAIL-PACK-CREDENTIALS-FILE* "~/.authinfo.gpg")
+(defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
 
 ;; ===================== setup function
 
@@ -106,29 +106,23 @@
     (setq mu4e-maildir (expand-file-name folder-mail-address)
           mu4e-drafts-folder "/[Gmail].Drafts"
           mu4e-sent-folder   "/[Gmail].Sent Mail"
-          mu4e-trash-folder  "/[Gmail].Trash")
+          mu4e-trash-folder  "/[Gmail].Trash"
+          ;; setup some handy shortcuts
+          mu4e-maildir-shortcuts `(("/INBOX"             . ?i)
+                                   (,mu4e-sent-folder    . ?s)
+                                   (,mu4e-trash-folder   . ?t)
+                                   (,mu4e-drafts-folder  . ?d)))
 
     ;; don't save message to Sent Messages, GMail/IMAP will take care of this
     (setq mu4e-sent-messages-behavior 'delete)
 
-    ;; setup some handy shortcuts
-    (setq mu4e-maildir-shortcuts
-          '(("/INBOX"             . ?i)
-            ("/[Gmail].Sent Mail" . ?s)
-            ("/[Gmail].Trash"     . ?t)))
-
     (setq mu4e-get-mail-command "offlineimap" ;; allow for updating mail using 'U' in the main view
           mu4e-update-interval  300)          ;; update every 5 min
-
-    ;; something about ourselves
-    (setq user-mail-address mail-address
-          user-full-name    full-name
-          message-signature signature)
 
     (setq mu4e-headers-mode-hook)
     (add-hook 'mu4e-headers-mode-hook
               (lambda ()
-                (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-change-sorting)))
+                (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-view-message)))
 
     (setq mu4e-main-mode-hook)
     (add-hook 'mu4e-main-mode-hook
@@ -137,6 +131,17 @@
                 (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
                 (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
                 (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)))
+
+    (setq mu4e-attachment-dir "~/Downloads")
+    (setq mu4e-view-show-images t)
+    ;; prefer plain text message
+    (setq mu4e-view-prefer-html)
+    ;; to convert html to plain text - prerequisite: aptitude install -y html2text
+    (setq mu4e-html2text-command "html2text -utf8 -width 120")
+    ;; to convert html to plain text - prerequisite: aptitude install -y html2mardown
+    ;; (setq mu4e-html2text-command "html2markdown | grep -v '&nbsp_place_holder;'")
+    ;; to convert html to org - prerequisite: aptitude install -y pandoc
+    ;; (setq mu4e-html2text-command "pandoc -f html -t org")
 
     (global-set-key (kbd "C-c e m") 'mu4e)
 
