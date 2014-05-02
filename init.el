@@ -50,6 +50,7 @@
   ;; SMTP setup
   ;; set up smtp so we can send from gmail too:
   (setq message-send-mail-function    'smtpmail-send-it
+        ;; starttls-use-gnutls           t
         smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
         smtpmail-auth-credentials     (expand-file-name creds-file)
         smtpmail-default-smtp-server  "smtp.gmail.com"
