@@ -9,6 +9,7 @@
 (require 'gnus)
 (require 'creds)
 (require 'dash)
+(require 'smtpmail)
 
 ;; ===================== setup file
 
