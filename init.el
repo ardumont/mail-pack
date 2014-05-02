@@ -4,18 +4,26 @@
 
 ;;; Code:
 
-(install-packs '(creds
+(install-packs '(s
+                 dash
+                 creds
                  google-contacts
                  offlineimap))
 
 (require 'gnus)
 (require 'creds)
 (require 'dash)
+(require 's)
 (require 'smtpmail)
 (require 'google-contacts)
 (require 'google-contacts-gnus)
 (require 'google-contacts-message)
 (require 'offlineimap)
+
+;; install mu in your system `sudo aptitude install -y mu`
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
+(require 'mu4e)
 
 ;; ===================== setup file
 
@@ -95,6 +103,44 @@
           smtpmail-smtp-server          "smtp.gmail.com"
           smtpmail-smtp-service         587)
 
+    ;; mu4e
+
+    ;; default
+    (setq mu4e-maildir (expand-file-name folder-mail-address)
+          mu4e-drafts-folder "/[Gmail].Drafts"
+          mu4e-sent-folder   "/[Gmail].Sent Mail"
+          mu4e-trash-folder  "/[Gmail].Trash")
+
+    ;; don't save message to Sent Messages, GMail/IMAP will take care of this
+    (setq mu4e-sent-messages-behavior 'delete)
+
+    ;; setup some handy shortcuts
+    (setq mu4e-maildir-shortcuts
+          '(("/INBOX"             . ?i)
+            ("/[Gmail].Sent Mail" . ?s)
+            ("/[Gmail].Trash"     . ?t)))
+
+    (setq mu4e-get-mail-command "offlineimap" ;; allow for updating mail using 'U' in the main view
+          mu4e-update-interval  300)          ;; update every 5 min
+
+    ;; something about ourselves
+    (setq user-mail-address mail-address
+          user-full-name    full-name
+          message-signature signature)
+
+    (setq mu4e-main-mode-hook nil)
+    (add-hook 'mu4e-main-mode-hook
+              (lambda ()
+                (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
+                (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
+                (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
+                (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)
+
+                (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-change-sorting)))
+
+    (global-set-key (kbd "C-c e m") 'mu4e)
+
+    (setq message-kill-buffer-on-exit t)))
 
 ;; ===================== setup routine
 
