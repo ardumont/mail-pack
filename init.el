@@ -65,40 +65,46 @@
     ;;                                   (nnimap-server-port 993)
     ;;                                   (nnimap-stream ssl)))
 
-    (setq gnus-select-method `(nnmaildir "GMail"
-                                         (directory ,folder-mail-address)
-                                         (directory-files nnheader-directory-files-safe)
-                                         (get-new-mail nil)))
+    ;; (setq gnus-select-method `(nnmaildir "GMail"
+    ;;                                      (directory ,folder-mail-address)
+    ;;                                      (directory-files nnheader-directory-files-safe)
+    ;;                                      (get-new-mail nil)))
 
-    (define-key gnus-group-mode-map (kbd "U")
-      (lambda ()
-        (interactive)
-        (shell-command "offlineimap" "*offlineimap*" nil)))
+    ;; (define-key gnus-group-mode-map (kbd "U")
+    ;;   (lambda ()
+    ;;     (interactive)
+    ;;     (shell-command "offlineimap" "*offlineimap*" nil)))
 
     ;;http://www.emacswiki.org/cgi-bin/wiki/GnusGmail
     ;;http://linil.wordpress.com/2008/01/18/gnus-gmail/
 
-    (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+    ;; (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
 
     ;; Threads are nice!
-    (setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
+    ;; (setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
 
     (setq gnus-posting-styles `((".*"
                                  (name ,full-name)
                                  ("X-URL" ,x-url)
                                  (mail-host-address ,mail-host))))
 
+    ;; something about ourselves
+    (setq user-mail-address mail-address
+          user-full-name    full-name
+          message-signature signature)
+
     ;; SMTP setup
 
-    ;; set up smtp so we can send from gmail too:
-    (setq send-mail-function 'smtpmail-send-it
-          message-send-mail-function    'smtpmail-send-it
-          ;; starttls-use-gnutls           t
+    ;; pre-requisite: gnutls-bin package installed
+    ;; set up smtp so we can send from gmail too
+    (setq message-send-mail-function    'smtpmail-send-it
+          starttls-use-gnutls           t
           smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-          smtpmail-auth-credentials     (expand-file-name creds-file)
+          smtpmail-auth-credentials     creds-file
           smtpmail-default-smtp-server  "smtp.gmail.com"
           smtpmail-smtp-server          "smtp.gmail.com"
-          smtpmail-smtp-service         587)
+          smtpmail-smtp-service         587
+          smtpmail-debug-info           t)
 
     ;; mu4e
 
