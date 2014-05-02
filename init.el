@@ -83,9 +83,6 @@
     ;; Threads are nice!
     (setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
 
-    (setq user-mail-address mail-address)
-    (setq user-full-name    full-name)
-
     (setq gnus-posting-styles `((".*"
                                  (name ,full-name)
                                  ("X-URL" ,x-url)
