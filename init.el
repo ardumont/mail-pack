@@ -125,15 +125,18 @@
           user-full-name    full-name
           message-signature signature)
 
-    (setq mu4e-main-mode-hook nil)
+    (setq mu4e-headers-mode-hook)
+    (add-hook 'mu4e-headers-mode-hook
+              (lambda ()
+                (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-change-sorting)))
+
+    (setq mu4e-main-mode-hook)
     (add-hook 'mu4e-main-mode-hook
               (lambda ()
                 (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
                 (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
                 (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
-                (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)
-
-                (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-change-sorting)))
+                (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)))
 
     (global-set-key (kbd "C-c e m") 'mu4e)
 
