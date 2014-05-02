@@ -4,12 +4,18 @@
 
 ;;; Code:
 
-(install-packs '(creds))
+(install-packs '(creds
+                 google-contacts
+                 offlineimap))
 
 (require 'gnus)
 (require 'creds)
 (require 'dash)
 (require 'smtpmail)
+(require 'google-contacts)
+(require 'google-contacts-gnus)
+(require 'google-contacts-message)
+(require 'offlineimap)
 
 ;; ===================== setup file
 
