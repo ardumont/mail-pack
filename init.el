@@ -72,6 +72,7 @@
   (setq x-url        (creds/get-entry description "x-url"))
   (setq mail-address (creds/get-entry description "mail"))
   (setq mail-host    (creds/get-entry description "mail-host"))
+  (setq signature    (creds/get-entry description "signature"))
 
   (setq user-mail-address mail-address)
   (setq user-full-name    full-name)
@@ -94,7 +95,7 @@
                    "Here is a sample content to setup to your need into '" *MAIL-PACK-CREDENTIALS-FILE* "':\n"
                    "machine imap.gmail.com login <your-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
                    "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-                   "machine description firstname <firstname> surname <surname> name <name> x-url <some-url> mail <your-email> mail-host <your-mail-host>\n"
+                   "machine description firstname <firstname> surname <surname> name <name> x-url <some-url> mail <your-email> mail-host <your-mail-host> signature <your-mail-signature>\n"
                    "Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo")))
 
 ;;; mail-pack.el ends here
