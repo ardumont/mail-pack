@@ -36,53 +36,65 @@
           parsed-lines))))
 
 (defun mail-pack/setup (creds-file creds-file-content)
-  "My default gnus setup."
-  ;; got this line from one of the tutorials. Seemed interesting enough
-  (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
+  "Mail pack setup"
+  (let* ((description         (creds/get creds-file-content "description"))
+         (full-name           (format "%s %s %s" (creds/get-entry description "firstname") (creds/get-entry description "surname") (creds/get-entry description "name")))
+         (x-url               (creds/get-entry description "x-url"))
+         (mail-address        (creds/get-entry description "mail"))
+         (mail-host           (creds/get-entry description "mail-host"))
+         (signature           (creds/get-entry description "signature"))
+         (folder-mail-address (format "~/.mails/%s" (car (s-split "@" mail-address)))))
 
-  ;; IMAP setup
-  ;; standard way of getting imap going
-  (setq gnus-select-method '(nnimap "gmail"
-                                    (nnimap-address "imap.gmail.com")
-                                    (nnimap-server-port 993)
-                                    (nnimap-stream ssl)))
+    ;; GNUs setup
 
-  ;; SMTP setup
-  ;; set up smtp so we can send from gmail too:
-  (setq message-send-mail-function    'smtpmail-send-it
-        ;; starttls-use-gnutls           t
-        smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-        smtpmail-auth-credentials     (expand-file-name creds-file)
-        smtpmail-default-smtp-server  "smtp.gmail.com"
-        smtpmail-smtp-server          "smtp.gmail.com"
-        smtpmail-smtp-service         587)
+    ;; got this line from one of the tutorials. Seemed interesting enough
+    (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
 
-  ;;http://www.emacswiki.org/cgi-bin/wiki/GnusGmail
-  ;;http://linil.wordpress.com/2008/01/18/gnus-gmail/
+    ;; IMAP setup
+    ;; standard way of getting imap going
+    ;; (setq gnus-select-method '(nnimap "gmail"
+    ;;                                   (nnimap-address "imap.gmail.com")
+    ;;                                   (nnimap-server-port 993)
+    ;;                                   (nnimap-stream ssl)))
 
-  (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
+    (setq gnus-select-method `(nnmaildir "GMail"
+                                         (directory ,folder-mail-address)
+                                         (directory-files nnheader-directory-files-safe)
+                                         (get-new-mail nil)))
 
-  ;; Threads are nice!
-  (setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
+    (define-key gnus-group-mode-map (kbd "U")
+      (lambda ()
+        (interactive)
+        (shell-command "offlineimap" "*offlineimap*" nil)))
 
-  (setq description (creds/get creds-file-content "description"))
+    ;;http://www.emacswiki.org/cgi-bin/wiki/GnusGmail
+    ;;http://linil.wordpress.com/2008/01/18/gnus-gmail/
 
-  (setq full-name (format "%s %s %s" (creds/get-entry description "firstname") (creds/get-entry description "surname") (creds/get-entry description "name")))
+    (add-hook 'gnus-group-mode-hook 'gnus-topic-mode)
 
-  (setq x-url        (creds/get-entry description "x-url"))
-  (setq mail-address (creds/get-entry description "mail"))
-  (setq mail-host    (creds/get-entry description "mail-host"))
-  (setq signature    (creds/get-entry description "signature"))
+    ;; Threads are nice!
+    (setq gnus-summary-thread-gathering-function 'gnus-gather-threads-by-subject)
 
-  (setq user-mail-address mail-address)
-  (setq user-full-name    full-name)
+    (setq user-mail-address mail-address)
+    (setq user-full-name    full-name)
 
-  (setq gnus-posting-styles `((".*"
-                               (name ,full-name)
-                               ("X-URL" ,x-url)
-                               (mail-host-address ,mail-host))))
+    (setq gnus-posting-styles `((".*"
+                                 (name ,full-name)
+                                 ("X-URL" ,x-url)
+                                 (mail-host-address ,mail-host))))
 
-  (setq send-mail-function 'smtpmail-send-it))
+    ;; SMTP setup
+
+    ;; set up smtp so we can send from gmail too:
+    (setq send-mail-function 'smtpmail-send-it
+          message-send-mail-function    'smtpmail-send-it
+          ;; starttls-use-gnutls           t
+          smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+          smtpmail-auth-credentials     (expand-file-name creds-file)
+          smtpmail-default-smtp-server  "smtp.gmail.com"
+          smtpmail-smtp-server          "smtp.gmail.com"
+          smtpmail-smtp-service         587)
+
 
 ;; ===================== setup routine
 
