@@ -149,6 +149,23 @@
     ;; to convert html to org - prerequisite: aptitude install -y pandoc
     ;; (setq mu4e-html2text-command "pandoc -f html -t org")
 
+    ;; see mu4e-header-info for the full list of keywords
+    (setq mu4e-headers-fields '((:human-date    . 25)
+                                (:flags         . 6)
+                                (:from-or-to    . 30)
+                                (:mailing-list  . 10)
+                                ;;(:tags          . 10)
+                                (:subject)))
+
+    ;; see format-time-string for the format
+    ;; (setq mu4e-headers-date-format "%FT%T%z") ;; universal date
+    (setq mu4e-headers-date-format "%d/%m/%Y %H:%M") ;; french readable
+
+    ;; only consider email addresses that were seen in personal messages
+    (setq mu4e-compose-complete-only-personal t)
+    ;; auto complete addresses
+    (setq mu4e-compose-complete-addresses t)
+
     (global-set-key (kbd "C-c e m") 'mu4e)
 
     (setq message-kill-buffer-on-exit t)))
