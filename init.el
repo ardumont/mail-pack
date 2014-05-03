@@ -103,8 +103,7 @@
           smtpmail-auth-credentials     creds-file
           smtpmail-default-smtp-server  "smtp.gmail.com"
           smtpmail-smtp-server          "smtp.gmail.com"
-          smtpmail-smtp-service         587
-          smtpmail-debug-info           t)
+          smtpmail-smtp-service         587)
 
     ;; mu4e
 
