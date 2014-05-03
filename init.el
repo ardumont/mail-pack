@@ -52,21 +52,21 @@
          (mail-host           (creds/get-entry description "mail-host"))
          (signature           (creds/get-entry description "signature"))
          (folder-mail-address (format "~/.mails/%s" (car (s-split "@" mail-address)))))
-
-    ;; GNUs setup
-
-    ;; got this line from one of the tutorials. Seemed interesting enough
-    (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
-
-    (setq gnus-posting-styles `((".*"
-                                 (name ,full-name)
-                                 ("X-URL" ,x-url)
-                                 (mail-host-address ,mail-host))))
+    ;; Global setup
 
     ;; something about ourselves
     (setq user-mail-address mail-address
           user-full-name    full-name
           message-signature signature)
+
+    ;; GNUs setup
+
+    ;; got this line from one of the tutorials. Seemed interesting enough
+    (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
+          gnus-posting-styles `((".*"
+                                 (name ,full-name)
+                                 ("X-URL" ,x-url)
+                                 (mail-host-address ,mail-host))))
 
     ;; SMTP setup
 
