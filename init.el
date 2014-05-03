@@ -84,7 +84,6 @@
 
     ;; mu4e
 
-    ;; default
     (setq mu4e-maildir (expand-file-name folder-mail-address)
           mu4e-drafts-folder "/[Gmail].Drafts"
           mu4e-sent-folder   "/[Gmail].Sent Mail"
@@ -93,20 +92,48 @@
           mu4e-maildir-shortcuts `(("/INBOX"             . ?i)
                                    (,mu4e-sent-folder    . ?s)
                                    (,mu4e-trash-folder   . ?t)
-                                   (,mu4e-drafts-folder  . ?d)))
+                                   (,mu4e-drafts-folder  . ?d))
+          ;; don't save message to Sent Messages, GMail/IMAP will take care of this
+          mu4e-sent-messages-behavior 'delete
+          ;; allow for updating mail using 'U' in the main view
+          mu4e-get-mail-command "offlineimap"
+          ;; update every 5 min
+          mu4e-update-interval  300
+          mu4e-attachment-dir "~/Downloads"
+          mu4e-view-show-images t
+          ;; prefer plain text message
+          mu4e-view-prefer-html nil
+          ;; to convert html to plain text - prerequisite: aptitude install -y html2text
+          mu4e-html2text-command "html2text -utf8 -width 120"
+          ;; to convert html to plain text - prerequisite: aptitude install -y html2mardown
+          ;; mu4e-html2text-command "html2markdown | grep -v '&nbsp_place_holder;'"
+          ;; to convert html to org - prerequisite: aptitude install -y pandoc
+          ;; mu4e-html2text-command "pandoc -f html -t org"
+          ;; see mu4e-header-info for the full list of keywords
+          mu4e-headers-fields '((:human-date    . 25)
+                                (:flags         . 6)
+                                (:from-or-to    . 30)
+                                (:mailing-list  . 10)
+                                ;;(:tags          . 10)
+                                (:subject))
+          ;; see format-time-string for the format - here french readable
+          mu4e-headers-date-format "%d/%m/%Y %H:%M"
+          ;; universal date
+          ;; mu4e-headers-date-format "%FT%T%z"
+          ;; only consider email addresses that were seen in personal messages
+          mu4e-compose-complete-only-personal t
+          ;; auto complete addresses
+          mu4e-compose-complete-addresses t
+          message-kill-buffer-on-exit t
+          mu4e-headers-mode-hook nil
+          mu4e-main-mode-hook nil)
 
-    ;; don't save message to Sent Messages, GMail/IMAP will take care of this
-    (setq mu4e-sent-messages-behavior 'delete)
+    ;; Hooks and keybindings
 
-    (setq mu4e-get-mail-command "offlineimap" ;; allow for updating mail using 'U' in the main view
-          mu4e-update-interval  300)          ;; update every 5 min
-
-    (setq mu4e-headers-mode-hook)
     (add-hook 'mu4e-headers-mode-hook
               (lambda ()
                 (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-view-message)))
 
-    (setq mu4e-main-mode-hook)
     (add-hook 'mu4e-main-mode-hook
               (lambda ()
                 (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
@@ -114,37 +141,7 @@
                 (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
                 (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)))
 
-    (setq mu4e-attachment-dir "~/Downloads")
-    (setq mu4e-view-show-images t)
-    ;; prefer plain text message
-    (setq mu4e-view-prefer-html)
-    ;; to convert html to plain text - prerequisite: aptitude install -y html2text
-    (setq mu4e-html2text-command "html2text -utf8 -width 120")
-    ;; to convert html to plain text - prerequisite: aptitude install -y html2mardown
-    ;; (setq mu4e-html2text-command "html2markdown | grep -v '&nbsp_place_holder;'")
-    ;; to convert html to org - prerequisite: aptitude install -y pandoc
-    ;; (setq mu4e-html2text-command "pandoc -f html -t org")
-
-    ;; see mu4e-header-info for the full list of keywords
-    (setq mu4e-headers-fields '((:human-date    . 25)
-                                (:flags         . 6)
-                                (:from-or-to    . 30)
-                                (:mailing-list  . 10)
-                                ;;(:tags          . 10)
-                                (:subject)))
-
-    ;; see format-time-string for the format
-    ;; (setq mu4e-headers-date-format "%FT%T%z") ;; universal date
-    (setq mu4e-headers-date-format "%d/%m/%Y %H:%M") ;; french readable
-
-    ;; only consider email addresses that were seen in personal messages
-    (setq mu4e-compose-complete-only-personal t)
-    ;; auto complete addresses
-    (setq mu4e-compose-complete-addresses t)
-
-    (global-set-key (kbd "C-c e m") 'mu4e)
-
-    (setq message-kill-buffer-on-exit t)))
+    (global-set-key (kbd "C-c e m") 'mu4e)))
 
 ;; ===================== setup routine
 
