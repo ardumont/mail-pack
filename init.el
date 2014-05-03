@@ -54,37 +54,29 @@
          (signature           (creds/get-entry description "signature"))
          (folder-mail-address (format "%s/%s" *MAIL-PACK-MAIL-ROOT-FOLDER* (car (s-split "@" mail-address)))))
 
-    ;; Global setup
-
-    ;; something about ourselves
-    (setq user-mail-address mail-address
+    (setq ;; Global setup
+          user-mail-address mail-address
           user-full-name    full-name
-          message-signature signature)
+          message-signature signature
 
-    ;; GNUs setup
-
-    ;; got this line from one of the tutorials. Seemed interesting enough
-    (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
+          ;; GNUs setup
+          gnus-invalid-group-regexp "[:`'\"]\\|^$"
           gnus-posting-styles `((".*"
                                  (name ,full-name)
                                  ("X-URL" ,x-url)
-                                 (mail-host-address ,mail-host))))
-
-    ;; SMTP setup
-
-    ;; pre-requisite: gnutls-bin package installed
-    ;; set up smtp so we can send from gmail too
-    (setq message-send-mail-function    'smtpmail-send-it
+                                 (mail-host-address ,mail-host)))
+          ;; SMTP setup ; pre-requisite: gnutls-bin package installed
+          message-send-mail-function    'smtpmail-send-it
           starttls-use-gnutls           t
           smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
           smtpmail-auth-credentials     creds-file
           smtpmail-default-smtp-server  "smtp.gmail.com"
           smtpmail-smtp-server          "smtp.gmail.com"
-          smtpmail-smtp-service         587)
+          smtpmail-smtp-service         587
 
-    ;; mu4e
+          ;; mu4e setup
 
-    (setq mu4e-maildir (expand-file-name folder-mail-address)
+          mu4e-maildir (expand-file-name folder-mail-address)
           mu4e-drafts-folder "/[Gmail].Drafts"
           mu4e-sent-folder   "/[Gmail].Sent Mail"
           mu4e-trash-folder  "/[Gmail].Trash"
