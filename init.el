@@ -28,6 +28,7 @@
 ;; ===================== setup file
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
+(defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails"))
 (defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
 
 ;; ===================== setup function
@@ -51,7 +52,8 @@
          (mail-address        (creds/get-entry description "mail"))
          (mail-host           (creds/get-entry description "mail-host"))
          (signature           (creds/get-entry description "signature"))
-         (folder-mail-address (format "~/.mails/%s" (car (s-split "@" mail-address)))))
+         (folder-mail-address (format "%s/%s" *MAIL-PACK-MAIL-ROOT-FOLDER* (car (s-split "@" mail-address)))))
+
     ;; Global setup
 
     ;; something about ourselves
