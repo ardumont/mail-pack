@@ -30,6 +30,7 @@
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
 (defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails"))
 (defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
+(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600 "Number of seconds between fetch + indexing. Default to 600 seconds.")
 
 ;; ===================== setup function
 
@@ -139,7 +140,7 @@ If all is ok, return the creds-file's content, nil otherwise."
         ;; allow for updating mail using 'U' in the main view
         mu4e-get-mail-command "offlineimap"
         ;; update every 5 min
-        mu4e-update-interval  300
+        mu4e-update-interval *MAIL-PACK-PERIOD-FETCH-MAIL*
         mu4e-attachment-dir "~/Downloads"
         mu4e-view-show-images t
         ;; prefer plain text message
