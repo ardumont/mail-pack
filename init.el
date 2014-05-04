@@ -193,7 +193,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 
 (defun mail-pack/--setup-as-main-account! (account-setup-vars)
   "Given the entry account vars, set the main account vars up."
-  (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr  account-setup-vars)))
+  (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup one account. If entry-number is not specified, we are dealing with the main account. Other it's a secondary account."
