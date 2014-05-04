@@ -167,8 +167,16 @@ If all is ok, return the creds-file's content, nil otherwise."
         ;; auto complete addresses
         mu4e-compose-complete-addresses t
         message-kill-buffer-on-exit t
+        ;; SMTP setup ; pre-requisite: gnutls-bin package installed
         message-send-mail-function    'smtpmail-send-it
+        smtpmail-stream-type          'starttls
         starttls-use-gnutls           t
+        smtpmail-smtp-service         587
+        smtpmail-default-smtp-server  "smtp.gmail.com"
+        smtpmail-smtp-server          "smtp.gmail.com"
+        smtpmail-debug-info t
+        smtpmail-debug-verb t
+        ;; empty the hooks
         mu4e-headers-mode-hook nil
         mu4e-main-mode-hook nil
         mu4e-compose-pre-hook nil))
@@ -212,9 +220,6 @@ If all is ok, return the creds-file's content, nil otherwise."
                                      ;; SMTP setup ; pre-requisite: gnutls-bin package installed
                                      (smtpmail-starttls-credentials ((,(mail-pack/--label entry-number "smtp.gmail.com") 587 ,mail-address nil)))
                                      (smtpmail-auth-credentials     ,creds-file)
-                                     (smtpmail-default-smtp-server  "smtp.gmail.com")
-                                     (smtpmail-smtp-server          "smtp.gmail.com")
-                                     (smtpmail-smtp-service         587)
 
                                      ;; mu4e setup
                                      (mu4e-maildir ,(expand-file-name folder-root-mail-address)))))
