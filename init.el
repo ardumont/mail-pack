@@ -193,14 +193,17 @@ If all is ok, return the creds-file's content, nil otherwise."
 
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup one account. If entry-number is not specified, we are dealing with the main account. Other it's a secondary account."
-  (let* ((description              (creds/get creds-file-content (mail-pack/--label entry-number "email-description")))
-         (full-name                (mail-pack/--compute-fullname (creds/get-entry description "firstname")
-                                                                 (creds/get-entry description "surname")
-                                                                 (creds/get-entry description "name")))
-         (x-url                    (creds/get-entry description "x-url"))
-         (mail-address             (creds/get-entry description "mail"))
-         (mail-host                (creds/get-entry description "mail-host"))
-         (signature                (creds/get-entry description "signature-file"))
+  (let* ((description-entry        (creds/get creds-file-content (mail-pack/--label entry-number "email-description")))
+         (full-name                (mail-pack/--compute-fullname (creds/get-entry description-entry "firstname")
+                                                                 (creds/get-entry description-entry "surname")
+                                                                 (creds/get-entry description-entry "name")))
+         (x-url                    (creds/get-entry description-entry "x-url"))
+         (mail-host                (creds/get-entry description-entry "mail-host"))
+         (signature                (creds/get-entry description-entry "signature-file"))
+         (smtp-server              (creds/get-entry description-entry "smtp-server"))
+         (mail-address             (creds/get-entry description-entry "mail"))
+         (smtp-server-entry        (creds/get-with creds-file-content `(("machine" . ,smtp-server) ("login" . ,mail-address))))
+         (smtp-port                (creds/get-entry smtp-server-entry "port"))
          (folder-mail-address      (mail-pack/--maildir-from-email mail-address))
          (folder-root-mail-address (format "%s/%s" *MAIL-PACK-MAIL-ROOT-FOLDER* folder-mail-address))
          ;; setup the account
@@ -214,10 +217,12 @@ If all is ok, return the creds-file's content, nil otherwise."
                                                             (name ,full-name)
                                                             ("X-URL" ,x-url)
                                                             (mail-host-address ,mail-host))))
-                                     ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-                                     (smtpmail-starttls-credentials ((,(mail-pack/--label entry-number "smtp.gmail.com") 587 ,mail-address nil)))
+                                     (smtpmail-smtp-user ,mail-address)
+                                     (smtpmail-starttls-credentials ((,smtp-server ,smtp-port nil nil)))
+                                     (smtpmail-smtp-service         ,smtp-port)
+                                     (smtpmail-default-smtp-server  ,smtp-server)
+                                     (smtpmail-smtp-server          ,smtp-server)
                                      (smtpmail-auth-credentials     ,creds-file)
-
                                      ;; mu4e setup
                                      (mu4e-maildir ,(expand-file-name folder-root-mail-address)))))
     ;; Sets the main account if it is the one!
