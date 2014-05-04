@@ -27,6 +27,9 @@
 
 ;; ===================== setup file
 
+;; activate option to keep the passphrase (it's preferable to use gpg-agent but I did not yet succeeded in doing so)
+(setq epa-file-cache-passphrase-for-symmetric-encryption t)
+
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
 (defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails"))
 (defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
