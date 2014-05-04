@@ -87,12 +87,12 @@ If all is ok, return the creds-file's content, nil otherwise."
   (let* ((possible-accounts       (mail-pack/--maildir-accounts accounts))
          (composed-parent-message (mail-pack/--compute-composed-message!))
          ;; determine which account to use
-         (account  (if composed-parent-message
-                       ;; when replying/forwarding a message
-                       (mail-pack/--retrieve-account composed-parent-message possible-accounts)
-                     ;; or otherwise, when composing a new email (we let the user choose which account (s)he wants to compose with)
-                     (completing-read (format "Compose with account: (%s) " (mapconcat #'car accounts "/"))
-                                      possible-accounts nil t nil nil (caar accounts))) :account)
+         (account (if composed-parent-message
+                      ;; when replying/forwarding a message
+                      (mail-pack/--retrieve-account composed-parent-message possible-accounts)
+                    ;; or otherwise, when composing a new email (we let the user choose which account (s)he wants to compose with)
+                    (completing-read (format "Compose with account: (%s) " (mapconcat #'car accounts "/"))
+                                     possible-accounts nil t nil nil (caar accounts))))
          ;; Then retrieving the main account vars setup
          (setup-account-vars (assoc account accounts)))
     (if setup-account-vars
