@@ -123,7 +123,7 @@ If all is ok, return the creds-file's content, nil otherwise."
       label
     (format "%s-%s" entry-number label)))
 
-(defun mail-pack/--common-configuration ()
+(defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
         mu4e-drafts-folder "/[Gmail].Drafts"
@@ -167,6 +167,8 @@ If all is ok, return the creds-file's content, nil otherwise."
         ;; auto complete addresses
         mu4e-compose-complete-addresses t
         message-kill-buffer-on-exit t
+        message-send-mail-function    'smtpmail-send-it
+        starttls-use-gnutls           t
         mu4e-headers-mode-hook nil
         mu4e-main-mode-hook nil
         mu4e-compose-pre-hook nil))
@@ -208,8 +210,6 @@ If all is ok, return the creds-file's content, nil otherwise."
                                                             ("X-URL" ,x-url)
                                                             (mail-host-address ,mail-host))))
                                      ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-                                     (message-send-mail-function    'smtpmail-send-it)
-                                     (starttls-use-gnutls           t)
                                      (smtpmail-starttls-credentials ((,(mail-pack/--label entry-number "smtp.gmail.com") 587 ,mail-address nil)))
                                      (smtpmail-auth-credentials     ,creds-file)
                                      (smtpmail-default-smtp-server  "smtp.gmail.com")
@@ -229,7 +229,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 (defun mail-pack/setup (creds-file creds-file-content)
   "Mail pack setup"
   ;; common setup
-  (mail-pack/--common-configuration)
+  (mail-pack/--common-configuration!)
 
   ;; reinit the accounts list
   (setq my-mu4e-account-alist)
