@@ -240,7 +240,7 @@ If all is ok, return the creds-file's content, nil otherwise."
   (-when-let (nb-accounts (mail-pack/--nb-accounts creds-file-content))
     (when (< 1 nb-accounts)
       (->> (number-sequence 2 nb-accounts)
-        (--map (mail-pack/--setup-account *MAIL-PACK-CREDENTIALS-FILE* creds-file-content (format "%s" it)))
+        (--map (mail-pack/--setup-account creds-file creds-file-content (format "%s" it)))
         (--map (add-to-list 'my-mu4e-account-alist it)))))
 
   ;; main account setup
