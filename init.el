@@ -42,11 +42,10 @@
 and that the entries 'imap.gmail.com', 'smtp.gmail.com', and 'email-description' are provided.
 If all is ok, return the creds-file's content, nil otherwise."
   (when (file-exists-p creds-file)
-    (let ((parsed-lines (creds/read-lines creds-file)))
-      (when (and (creds/get parsed-lines "imap.gmail.com")
-                 (creds/get parsed-lines "smtp.gmail.com")
-                 (creds/get parsed-lines "email-description"))
-        parsed-lines))))
+    (let ((creds-file-content (creds/read-lines creds-file)))
+      (when (and (creds/get creds-file-content "email-description")
+                 (creds/get creds-file-content "smtp.gmail.com"))
+        creds-file-content))))
 
 (defun mail-pack/--nb-accounts (creds-file-content)
   "Compute how many 'email-description' entries exist? This corresponds to the number of accounts setuped."
@@ -172,9 +171,6 @@ If all is ok, return the creds-file's content, nil otherwise."
         message-send-mail-function    'smtpmail-send-it
         smtpmail-stream-type          'starttls
         starttls-use-gnutls           t
-        smtpmail-smtp-service         587
-        smtpmail-default-smtp-server  "smtp.gmail.com"
-        smtpmail-smtp-server          "smtp.gmail.com"
         smtpmail-debug-info t
         smtpmail-debug-verb t
         ;; empty the hooks
@@ -260,25 +256,25 @@ If all is ok, return the creds-file's content, nil otherwise."
       (mail-pack/log (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
       (mail-pack/setup *MAIL-PACK-CREDENTIALS-FILE* creds-file-content)
       (mail-pack/log "Setup done!"))
-  (mail-pack/log (concat
-                  "You need to setup your credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work. (The credentials file can be secured with gpg or not).\n"
-                  "\n"
-                  "A single account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
-                  "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail <email> mail-host <mail-host> signature <signature>\n"
-                  "machine imap.gmail.com login <your-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
-                  "machine smtp.gmail.com login <your-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-                  "\n"
-                  "A multiple account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
-                  "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail <email> mail-host <mail-host> signature <signature>\n"
-                  "machine imap.gmail.com login <your-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
-                  "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-                  "machine 2-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail <email> mail-host <mail-host> signature <signature>\n"
-                  "machine 2-imap.gmail.com login <2nd-email> password <your-mail-password-or-dedicated-passwd> port 993\n"
-                  "machine 2-smtp.gmail.com login <2nd-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-                  "machine 3-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail <email> mail-host <mail-host> signature <signature>\n"
-                  "...\n"
-                  "\n"
-                  "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.")))
+  (mail-pack/log
+   (concat
+    "You need to setup your credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work. (The credentials file can be secured with gpg or not).\n"
+    "\n"
+    "A single account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
+    "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n"
+    "machine smtp.gmail.com login <your-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
+    "\n"
+    "A multiple account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
+    "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
+    "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
+    "machine 2-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
+    "machine smtp.gmail.com login <2nd-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
+    "machine 3-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
+    "...\n"
+    "\n"
+    "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.\n"
+    "Whatever you choose, reference the file you use in your emacs configuration:\n"
+    "(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name \"~/.authinfo\"))")))
 
 (provide 'mail-pack)
 
