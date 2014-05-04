@@ -56,22 +56,47 @@ If all is ok, return the creds-file's content, nil otherwise."
                  0
                  creds-file-content))
 
-(defun mail-pack/mu4e-set-account (my-mu4e-account-alist)
-  "Set the account for composing a message."
-  (let* ((account (if mu4e-compose-parent-message
-                      (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                        (string-match "/\\(.*?\\)/" maildir)
-                        (match-string 1 maildir))
-                    (completing-read (format "Compose with account: (%s) "
-                                             (mapconcat #'(lambda (var) (car var)) my-mu4e-account-alist "/"))
-                                     (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-                                     nil t nil nil (caar my-mu4e-account-alist))))
-         (account-vars (cdr (assoc account my-mu4e-account-alist))))
-    (if account-vars
-        (mapc #'(lambda (var)
-                  (set (car var) (cadr var)))
-              account-vars)
-      (error "No email account found"))))
+(defun mail-pack/--find-account (emails-sent-to possible-account)
+  "Given a list of recipients (to, cc, bcc) and a possible account, try to filter the filter with such account."
+  (--filter (string= possible-account (mail-pack/--maildir-from-email it)) emails-sent-to))
+
+(defun mail-pack/--compute-composed-message! ()
+  "Compute the composed message (Delegate this to mu4e)."
+  mu4e-compose-parent-message)
+
+(defun mail-pack/--retrieve-account (composed-parent-message possible-accounts)
+  "Try and retrieve the mail account to which the composed-parent-message was sent to (look into the :to, :cc, :bcc fields if we found the right account).
+ If all accounts are found, return the first one."
+  ;; build all the emails recipients (to, cc, bcc)
+  (let ((emails-sent-to (mapcar #'cdr (concatenate #'list
+                                                   (plist-get composed-parent-message :to)
+                                                   (plist-get composed-parent-message :cc)
+                                                   (plist-get composed-parent-message :bcc)))))
+    ;; try to find the accounts the mail was sent to
+    (-when-let (found-accounts (--mapcat (mail-pack/--find-account emails-sent-to it) possible-accounts))
+      ;; return the account found
+      (mail-pack/--maildir-from-email (car found-accounts)))))
+
+(defun mail-pack/--maildir-accounts (accounts)
+  "Given the list of accounts, return only the list of possible maildirs."
+  (mapcar #'car accounts))
+
+(defun mail-pack/set-account (accounts)
+  "Set the account. When composing a new message, ask the user to choose. When replying/forwarding, determine automatically the account to use."
+  (let* ((possible-accounts       (mail-pack/--maildir-accounts accounts))
+         (composed-parent-message (mail-pack/--compute-composed-message!))
+         ;; determine which account to use
+         (account  (if composed-parent-message
+                       ;; when replying/forwarding a message
+                       (mail-pack/--retrieve-account composed-parent-message possible-accounts)
+                     ;; or otherwise, when composing a new email (we let the user choose which account (s)he wants to compose with)
+                     (completing-read (format "Compose with account: (%s) " (mapconcat #'car accounts "/"))
+                                      possible-accounts nil t nil nil (caar accounts))) :account)
+         ;; Then retrieving the main account vars setup
+         (setup-account-vars (assoc account accounts)))
+    (if setup-account-vars
+        (mail-pack/--setup-as-main-account! setup-account-vars)
+      (error "No email account found!"))))
 
 (defun mail-pack/--setup-keybindings-and-hooks (my-mu4e-account-alist)
   "Install hooks and keybindings."
@@ -90,7 +115,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 
   ;; Hook to determine which account to use before composing
   (add-hook 'mu4e-compose-pre-hook
-            (lambda () (mail-pack/mu4e-set-account my-mu4e-account-alist))))
+            (lambda () (mail-pack/set-account my-mu4e-account-alist))))
 
 (defun mail-pack/--label (entry-number label)
   "Given an entry number, compute the label"
@@ -99,7 +124,7 @@ If all is ok, return the creds-file's content, nil otherwise."
     (format "%s-%s" entry-number label)))
 
 (defun mail-pack/--common-configuration ()
-  ;; constant configuration
+  "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
         mu4e-drafts-folder "/[Gmail].Drafts"
         mu4e-sent-folder   "/[Gmail].Sent Mail"
@@ -146,63 +171,58 @@ If all is ok, return the creds-file's content, nil otherwise."
         mu4e-main-mode-hook nil
         mu4e-compose-pre-hook nil))
 
+(defun mail-pack/--compute-fullname (firstname surname name)
+  "Compute the user's fullname"
+  (cl-flet ((if-null-then-empty (v) (if v v "")))
+    (s-trim (format "%s %s %s" (if-null-then-empty firstname) (if-null-then-empty surname) (if-null-then-empty name)))))
+
+(defun mail-pack/--maildir-from-email (mail-address)
+  "Compute the maildir (without its root folder) from the mail-address."
+  (car (s-split "@" mail-address)))
+
+(defun mail-pack/--setup-as-main-account! (account-setup-vars)
+  "Given the entry account vars, set the main account vars up."
+  (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr  account-setup-vars)))
+
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup one account. If entry-number is not specified, we are dealing with the main account. Other it's a secondary account."
   (let* ((description              (creds/get creds-file-content (mail-pack/--label entry-number "email-description")))
-         (full-name                (format "%s %s %s" (creds/get-entry description "firstname") (creds/get-entry description "surname") (creds/get-entry description "name")))
+         (full-name                (mail-pack/--compute-fullname (creds/get-entry description "firstname")
+                                                                 (creds/get-entry description "surname")
+                                                                 (creds/get-entry description "name")))
          (x-url                    (creds/get-entry description "x-url"))
          (mail-address             (creds/get-entry description "mail"))
          (mail-host                (creds/get-entry description "mail-host"))
          (signature                (creds/get-entry description "signature-file"))
-         (folder-mail-address      (car (s-split "@" mail-address)))
-         (folder-root-mail-address (format "%s/%s" *MAIL-PACK-MAIL-ROOT-FOLDER* folder-mail-address)))
+         (folder-mail-address      (mail-pack/--maildir-from-email mail-address))
+         (folder-root-mail-address (format "%s/%s" *MAIL-PACK-MAIL-ROOT-FOLDER* folder-mail-address))
+         ;; setup the account
+         (account-setup-vars       `(,folder-mail-address
+                                     ;; Global setup
+                                     (user-mail-address      ,mail-address)
+                                     (user-full-name         ,full-name)
+                                     (message-signature-file ,signature)
+                                     ;; GNUs setup
+                                     (gnus-posting-styles ((".*"
+                                                            (name ,full-name)
+                                                            ("X-URL" ,x-url)
+                                                            (mail-host-address ,mail-host))))
+                                     ;; SMTP setup ; pre-requisite: gnutls-bin package installed
+                                     (message-send-mail-function    'smtpmail-send-it)
+                                     (starttls-use-gnutls           t)
+                                     (smtpmail-starttls-credentials ((,(mail-pack/--label entry-number "smtp.gmail.com") 587 ,mail-address nil)))
+                                     (smtpmail-auth-credentials     ,creds-file)
+                                     (smtpmail-default-smtp-server  "smtp.gmail.com")
+                                     (smtpmail-smtp-server          "smtp.gmail.com")
+                                     (smtpmail-smtp-service         587)
 
-    ;; set the main account
+                                     ;; mu4e setup
+                                     (mu4e-maildir ,(expand-file-name folder-root-mail-address)))))
+    ;; Sets the main account if it is the one!
     (unless entry-number
-      (setq ;; Global setup
-       user-mail-address      mail-address
-       user-full-name         full-name
-       message-signature-file signature
-       ;; GNUs setup
-       gnus-posting-styles `((".*"
-                              (name ,full-name)
-                              ("X-URL" ,x-url)
-                              (mail-host-address ,mail-host)))
-       ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-       message-send-mail-function    'smtpmail-send-it
-       starttls-use-gnutls           t
-       smtpmail-starttls-credentials `((,(mail-pack/--label entry-number "smtp.gmail.com") 587 ,mail-address nil))
-       smtpmail-auth-credentials     creds-file
-       smtpmail-default-smtp-server  "smtp.gmail.com"
-       smtpmail-smtp-server          "smtp.gmail.com"
-       smtpmail-smtp-service         587
-
-       ;; mu4e setup
-       mu4e-maildir (expand-file-name folder-root-mail-address)))
-
-    ;; Compute the entry to add to the accounts list
-
-    `(,folder-mail-address
-      ;; Global setup
-      (user-mail-address      ,mail-address)
-      (user-full-name         ,full-name)
-      (message-signature-file ,signature)
-      ;; GNUs setup
-      (gnus-posting-styles ((".*"
-                             (name ,full-name)
-                             ("X-URL" ,x-url)
-                             (mail-host-address ,mail-host))))
-      ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-      (message-send-mail-function    'smtpmail-send-it)
-      (starttls-use-gnutls           t)
-      (smtpmail-starttls-credentials ((,(mail-pack/--label entry-number "smtp.gmail.com") 587 ,mail-address nil)))
-      (smtpmail-auth-credentials     ,creds-file)
-      (smtpmail-default-smtp-server  "smtp.gmail.com")
-      (smtpmail-smtp-server          "smtp.gmail.com")
-      (smtpmail-smtp-service         587)
-
-      ;; mu4e setup
-      (mu4e-maildir ,(expand-file-name folder-root-mail-address)))))
+      (mail-pack/--setup-as-main-account! account-setup-vars))
+    ;; In any case, return the account setup vars
+    account-setup-vars))
 
 (defvar my-mu4e-account-alist nil "Email Accounts list")
 
