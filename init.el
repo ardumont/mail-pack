@@ -154,12 +154,13 @@ If all is ok, return the creds-file's content, nil otherwise."
         ;; to convert html to org - prerequisite: aptitude install -y pandoc
         ;; mu4e-html2text-command "pandoc -f html -t org"
         ;; see mu4e-header-info for the full list of keywords
-        mu4e-headers-fields '((:human-date    . 20)
+        mu4e-headers-fields '((:human-date    . 16)
                               (:flags         . 6)
-                              (:from          . 30)
-                              (:to            . 30)
-                              (:mailing-list  . 10)
-                              ;;(:tags          . 10)
+                              (:from          . 25)
+                              (:to            . 25)
+                              ;; (:mailing-list  . 10)
+                              (:size          . 10)
+                              ;; (:tags          . 10)
                               (:subject))
         ;; see format-time-string for the format - here french readable
         mu4e-headers-date-format "%d/%m/%Y %H:%M"
