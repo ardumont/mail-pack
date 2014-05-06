@@ -141,6 +141,8 @@ If all is ok, return the creds-file's content, nil otherwise."
         mu4e-headers-skip-duplicates t
         ;; default page size
         mu4e-headers-results-limit 500
+        mu4e~headers-sort-direction 'descending
+        mu4e~headers-sort-field :date
         ;; don't save message to Sent Messages, GMail/IMAP will take care of this
         mu4e-sent-messages-behavior 'delete
         ;; allow for updating mail using 'U' in the main view
