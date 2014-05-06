@@ -33,7 +33,7 @@ Create a `~/.authinfo` file with your email credentials on 2 separates machine l
 - one for the description
 - one for the credentials for the smtp part
 
-``` txt
+```text
 machine description mail your-email smtp-server Smtp-server firstname Login surname Surname name Name x-url some-url-you-like mail-host Hostname-of-your-server
 machine smtp-server login your-email port 587 password your-password-or-your-password-generated-for-emacs-in-google-account
 ```
@@ -43,7 +43,7 @@ This is important that those entries values map exactly to the values of the key
 
 Example:
 
-``` txt
+```text
 machine description mail tony@gmail.com smtp-server smtp.gmail.com firstname Login surname romain name dumont x-url http://adumont.fr/blog/ mail-host arrakis
 machine smtp.gmail.com login tony@gmail.com port 587 password your-password-or-your-password-generated-for-emacs-in-google-account
 ```
