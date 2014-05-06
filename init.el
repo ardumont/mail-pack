@@ -137,6 +137,10 @@ If all is ok, return the creds-file's content, nil otherwise."
                                  (,mu4e-sent-folder    . ?s)
                                  (,mu4e-trash-folder   . ?t)
                                  (,mu4e-drafts-folder  . ?d))
+        ;; skip duplicates by default
+        mu4e-headers-skip-duplicates t
+        ;; default page size
+        mu4e-headers-results-limit 500
         ;; don't save message to Sent Messages, GMail/IMAP will take care of this
         mu4e-sent-messages-behavior 'delete
         ;; allow for updating mail using 'U' in the main view
@@ -180,7 +184,10 @@ If all is ok, return the creds-file's content, nil otherwise."
         ;; empty the hooks
         mu4e-headers-mode-hook nil
         mu4e-main-mode-hook nil
-        mu4e-compose-pre-hook nil))
+        mu4e-compose-pre-hook nil)
+  ;; Add bookmarks query
+  (add-to-list 'mu4e-bookmarks '("size:5M..500M" "Big messages" ?b) t)
+  (add-to-list 'mu4e-bookmarks '("date:today..now AND flag:unread AND NOT flag:trashed" "Unread messages from today" ?U)))
 
 (defun mail-pack/--compute-fullname (firstname surname name)
   "Compute the user's fullname"
