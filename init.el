@@ -246,7 +246,7 @@ If all is ok, return the creds-file's content, nil otherwise."
     ;; In any case, return the account setup vars
     account-setup-vars))
 
-(defvar my-mu4e-account-alist nil "Email Accounts list")
+(defvar *MAIL-PACK-ACCOUNTS* nil "User's email Accounts.")
 
 (defun mail-pack/setup (creds-file creds-file-content)
   "Mail pack setup"
@@ -254,20 +254,20 @@ If all is ok, return the creds-file's content, nil otherwise."
   (mail-pack/--common-configuration!)
 
   ;; reinit the accounts list
-  (setq my-mu4e-account-alist)
+  (setq *MAIL-PACK-ACCOUNTS*)
 
   ;; secondary accounts setup
   (-when-let (nb-accounts (mail-pack/--nb-accounts creds-file-content))
     (when (< 1 nb-accounts)
       (->> (number-sequence 2 nb-accounts)
         (--map (mail-pack/--setup-account creds-file creds-file-content (format "%s" it)))
-        (--map (add-to-list 'my-mu4e-account-alist it)))))
+        (--map (add-to-list '*MAIL-PACK-ACCOUNTS* it)))))
 
   ;; main account setup
-  (add-to-list 'my-mu4e-account-alist (mail-pack/--setup-account creds-file creds-file-content))
+  (add-to-list '*MAIL-PACK-ACCOUNTS* (mail-pack/--setup-account creds-file creds-file-content))
 
   ;; install bindings and hooks
-  (mail-pack/--setup-keybindings-and-hooks my-mu4e-account-alist))
+  (mail-pack/--setup-keybindings-and-hooks *MAIL-PACK-ACCOUNTS*))
 
 ;; ===================== setup routine
 
