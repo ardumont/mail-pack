@@ -132,11 +132,13 @@ If all is ok, return the creds-file's content, nil otherwise."
         mu4e-drafts-folder "/[Gmail].Drafts"
         mu4e-sent-folder   "/[Gmail].Sent Mail"
         mu4e-trash-folder  "/[Gmail].Trash"
+        mu4e-refile-folder "/[Gmail].All Mail"
         ;; setup some handy shortcuts
         mu4e-maildir-shortcuts `(("/INBOX"             . ?i)
                                  (,mu4e-sent-folder    . ?s)
                                  (,mu4e-trash-folder   . ?t)
-                                 (,mu4e-drafts-folder  . ?d))
+                                 (,mu4e-drafts-folder  . ?d)
+                                 (,mu4e-refile-folder  . ?a))
         ;; skip duplicates by default
         mu4e-headers-skip-duplicates t
         ;; default page size
