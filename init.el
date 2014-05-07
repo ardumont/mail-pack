@@ -108,7 +108,7 @@ If all is ok, return the creds-file's content, nil otherwise."
         (mail-pack/--setup-as-main-account! account)
       (error "No email account found!"))))
 
-(defun mail-pack/--setup-keybindings-and-hooks (my-mu4e-account-alist)
+(defun mail-pack/--setup-keybindings-and-hooks! ()
   "Install hooks and keybindings."
   (add-hook 'mu4e-headers-mode-hook
             (lambda ()
@@ -125,7 +125,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 
   ;; Hook to determine which account to use before composing
   (add-hook 'mu4e-compose-pre-hook
-            (lambda () (mail-pack/set-account my-mu4e-account-alist))))
+            (lambda () (mail-pack/set-account *MAIL-PACK-ACCOUNTS*))))
 
 (defun mail-pack/--label (entry-number label)
   "Given an entry number, compute the label"
@@ -201,20 +201,21 @@ If all is ok, return the creds-file's content, nil otherwise."
   (add-to-list 'mu4e-bookmarks '("date:today..now AND flag:unread AND NOT flag:trashed" "Unread messages from today" ?U)))
 
 (defun mail-pack/--compute-fullname (firstname surname name)
-  "Compute the user's fullname"
+  "Given the user's FIRSTNAME, SURNAME and NAME, compute the user's fullname."
   (cl-flet ((if-null-then-empty (v) (if v v "")))
     (s-trim (format "%s %s %s" (if-null-then-empty firstname) (if-null-then-empty surname) (if-null-then-empty name)))))
 
 (defun mail-pack/--maildir-from-email (mail-address)
-  "Compute the maildir (without its root folder) from the mail-address."
+  "Compute the maildir (without its root folder) from the MAIL-ADDRESS."
   (car (s-split "@" mail-address)))
 
 (defun mail-pack/--setup-as-main-account! (account-setup-vars)
-  "Given the entry account vars, set the main account vars up."
+  "Given the entry ACCOUNT-SETUP-VARS, set the main account vars up."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
-  "Setup one account. If entry-number is not specified, we are dealing with the main account. Other it's a secondary account."
+  "Given the CREDS-FILE path, the CREDS-FILE-CONTENT and an optional ENTRY-NUMBER, setup one account.
+If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it's a secondary account."
   (let* ((description-entry        (creds/get creds-file-content (mail-pack/--label entry-number "email-description")))
          (full-name                (mail-pack/--compute-fullname (creds/get-entry description-entry "firstname")
                                                                  (creds/get-entry description-entry "surname")
@@ -256,7 +257,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 (defvar *MAIL-PACK-ACCOUNTS* nil "User's email Accounts.")
 
 (defun mail-pack/setup (creds-file creds-file-content)
-  "Mail pack setup"
+  "Mail pack setup with the CREDS-FILE path and the CREDS-FILE-CONTENT."
   ;; common setup
   (mail-pack/--common-configuration!)
 
@@ -274,7 +275,7 @@ If all is ok, return the creds-file's content, nil otherwise."
   (add-to-list '*MAIL-PACK-ACCOUNTS* (mail-pack/--setup-account creds-file creds-file-content))
 
   ;; install bindings and hooks
-  (mail-pack/--setup-keybindings-and-hooks *MAIL-PACK-ACCOUNTS*))
+  (mail-pack/--setup-keybindings-and-hooks!))
 
 ;; ===================== setup routine
 
