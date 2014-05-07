@@ -69,7 +69,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 
 (defun mail-pack/--retrieve-account (composed-parent-message possible-accounts)
   "Try and retrieve the mail account to which the composed-parent-message was sent to (look into the :to, :cc, :bcc fields if we found the right account).
- If all accounts are found, return the first one."
+ If all accounts are found, return the first one." ;; TODO look at mu4e-message-contact-field-matches -> (mu4e-message-contact-field-matches msg :to "me@work.com"))
   ;; build all the emails recipients (to, cc, bcc)
   (let ((emails-sent-to (mapcar #'cdr (concatenate #'list
                                                    (plist-get composed-parent-message :to)
