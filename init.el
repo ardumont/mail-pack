@@ -81,8 +81,19 @@ If all is ok, return the creds-file's content, nil otherwise."
       (mail-pack/--maildir-from-email (car found-accounts)))))
 
 (defun mail-pack/--maildir-accounts (accounts)
-  "Given the list of accounts, return only the list of possible maildirs."
+  "Given the ACCOUNTS list, return only the list of possible maildirs."
   (mapcar #'car accounts))
+
+(defun mail-pack/choose-main-account! (&optional account-list)
+  "Permit the user to choose an account from the optional ACCOUNT-LIST as main account. if the ACCOUNT-LIST is not provided, prompt the user with the last known account lists."
+  (interactive)
+  (let* ((accounts          (if account-list account-list *MAIL-PACK-ACCOUNTS*))
+         (possible-accounts (mail-pack/--maildir-accounts accounts))
+         (account           (completing-read (format "Compose with account: (%s) " (mapconcat #'car accounts "/"))
+                                             possible-accounts nil t nil nil (caar accounts)))
+         (setup-account-vars (assoc account accounts)))
+    (when setup-account-vars
+      (mail-pack/--setup-as-main-account! setup-account-vars))))
 
 (defun mail-pack/set-account (accounts)
   "Set the account. When composing a new message, ask the user to choose. When replying/forwarding, determine automatically the account to use."
@@ -92,13 +103,9 @@ If all is ok, return the creds-file's content, nil otherwise."
          (account (if composed-parent-message
                       ;; when replying/forwarding a message
                       (mail-pack/--retrieve-account composed-parent-message possible-accounts)
-                    ;; or otherwise, when composing a new email (we let the user choose which account (s)he wants to compose with)
-                    (completing-read (format "Compose with account: (%s) " (mapconcat #'car accounts "/"))
-                                     possible-accounts nil t nil nil (caar accounts))))
-         ;; Then retrieving the main account vars setup
-         (setup-account-vars (assoc account accounts)))
-    (if setup-account-vars
-        (mail-pack/--setup-as-main-account! setup-account-vars)
+                    (mail-pack/choose-main-account! accounts))))
+    (if account
+        (mail-pack/--setup-as-main-account! account)
       (error "No email account found!"))))
 
 (defun mail-pack/--setup-keybindings-and-hooks (my-mu4e-account-alist)
