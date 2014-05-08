@@ -161,16 +161,19 @@ this will prompt you with the account to set as main.
 To start using mu4e: `M-x mu4e` or `C-c m e`
 
 Convention to read keybindings:
-- <kbd>a</kbd>   hit *a*
-- <kbd>a/A</kbd> hit *a* or *A*
-- <kbd>b i</kbd> hit *b* followed by *i*
-- <kbd>C-c</kbd> Maintain *CTRL* and hit *c*
+
+Keybindings        | Action
+-------------------|----------------------------------------------------------------------------------------------------------------------------------
+<kbd>a</kbd>       | Hit *a*
+<kbd>a/A</kbd>     | Hit *a* or *A*
+<kbd>b i</kbd>     | Hit *b* followed by *i*
+<kbd>C-c</kbd>     | Maintain *CTRL* and hit *c*
 
 ## mu4e-main
 
 This is the main menu when you start mu4e.
 
-Keybindings        | Action
+Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
 <kbd>U</kbd>       | Launch offlineimap + mu for indexing
 <kbd>c/C</kbd>     | Compose an email (in interactive mode, will ask for your account if multiple)
@@ -193,7 +196,7 @@ This is the menu you see when jumping to a specific maildir folder or using book
 This presents an email lists.
 The buffer is in a dired similar mode. You can mark emails and execute those marks with `x`.
 
-Keybindings        | Action
+Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
 <kbd>R/r</kbd>     | Compose reply at point
 <kbd>f</kbd>       | Forward email at point
@@ -214,7 +217,7 @@ Keybindings        | Action
 
 When composing an email, you have some convenients bindings too.
 
-Keybindings        | Action
+Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
 <kbd>C-c C-c</kbd> | Send the email
 <kbd>C-c C-b</kbd> | Move directly to the body of the message
