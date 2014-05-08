@@ -1,12 +1,12 @@
 mail-pack
 =========
 
-Mail-pack is an emacs lib to setup one's client accounts email through a unique [~/.authinfo.gpg](http://www.emacswiki.org/emacs-en/GnusAuthinfo) (or simply plain *~/.authinfo*) file.
+Setup user's email accounts through a unique [~/.authinfo.gpg](http://www.emacswiki.org/emacs-en/GnusAuthinfo) (or simply plain *~/.authinfo*) file.
 
-This is using mu4e - http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top, this will:
+mail-pack will:
 - synchronize your accounts through [offlineimap](http://docs.offlineimap.org/en/latest/index.html) (which needs to be setup too, see https://github.com/ardumont/dot-files/blob/master/.offlineimaprc for an example) in [Maildir](https://en.wikipedia.org/wiki/Maildir) format
-- index local maildirs through [mu](http://www.djcbsoftware.nl/code/mu/)
-- read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format
+- index local maildir folders through [mu](http://www.djcbsoftware.nl/code/mu/) use
+- read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format through [mu4e](http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top) use
 - use [smtpmail](https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html) lib to send emails
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
