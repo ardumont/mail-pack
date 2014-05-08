@@ -314,7 +314,7 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
 
 ;; ===================== Starting the mode
 
-(defun mail-pack/load-mail-pack! ()
+(defun mail-pack/load-pack! ()
   (interactive)
   (-if-let (creds-file-content (mail-pack/setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*))
       (progn
@@ -341,7 +341,7 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
       "Whatever you choose, reference the file you use in your emacs configuration:\n"
       "(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name \"~/.authinfo\"))"))))
 
-(mail-pack/load-mail-pack!)
+(mail-pack/load-pack!)
 
 (provide 'mail-pack)
 ;;; mail-pack.el ends here
