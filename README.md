@@ -9,6 +9,29 @@ This is using mu4e - http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top, thi
 - read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format
 - use [smtpmail](https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html) lib to send emails
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+
+- [Pre-requisite](#pre-requisite)
+	- [Programs](#programs)
+- [Install](#install)
+	- [[emacs-live-packs](https://github.com/ardumont/emacs-live-packs)](#emacs-live-packshttpsgithubcomardumontemacs-live-packs)
+	- [[prelude-packs](https://github.com/ardumont/prelude-packs)](#prelude-packshttpsgithubcomardumontprelude-packs)
+	- [Standard emacs](#standard-emacs)
+- [Conventions](#conventions)
+	- [Load/reload](#loadreload)
+- [Setup](#setup)
+	- [One account](#one-account)
+	- [Multiple accounts](#multiple-accounts)
+	- [Set the main account](#set-the-main-account)
+- [Run](#run)
+	- [mu4e-main](#mu4e-main)
+	- [mu4e-headers](#mu4e-headers)
+	- [mu4e-compose](#mu4e-compose)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Pre-requisite
 
 ## Programs
@@ -214,7 +237,7 @@ Keybindings        | Description
 <kbd>x</kbd>       | Execute
 <kbd>q<kbd>        | Quit
 
-## Sending message
+## mu4e-compose
 
 When composing a message, you have some convenients bindings too.
 
