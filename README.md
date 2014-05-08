@@ -177,11 +177,12 @@ Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
 <kbd>U</kbd>       | Launch offlineimap + mu for indexing
 <kbd>c/C</kbd>     | Compose an email (in interactive mode, will ask for your account if multiple)
-<kbd>j</kbd>       | Jump menu
-<kbd>j i</kbd>     | Jump to inbox
-<kbd>j s</kbd>     | Jump to sent mail
-<kbd>s</kbd>       | Search through your mail through specific mu request, some examples: http://www.djcbsoftware.nl/code/mu/mu4e/Queries.html#Queries
-<kbd>b</kbd>       | Access to bookmarks (pre-recorded search)
+<kbd>j</kbd>       | Access to maildir folders
+<kbd>j i</kbd>     | Jump to inbox folder
+<kbd>j s</kbd>     | Jump to sent emails folder
+<kbd>j o</kbd>     | Jump to other emails folder
+<kbd>s</kbd>       | Search through your email through specific *mu* request, some examples: http://www.djcbsoftware.nl/code/mu/mu4e/Queries.html#Queries
+<kbd>b</kbd>       | Access to bookmarks (pre-recorded searches)
 <kbd>b u</kbd>     | Access to all unread messages
 <kbd>b U</kbd>     | Access to all unread messages from today
 <kbd>b t</kbd>     | Access to today's messages
