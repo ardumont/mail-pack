@@ -4,6 +4,7 @@
 
 ;;; Code:
 
+(require 'install-packages-pack)
 (install-packs '(s
                  dash
                  creds
@@ -343,5 +344,4 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
 (mail-pack/load-mail-pack!)
 
 (provide 'mail-pack)
-
 ;;; mail-pack.el ends here
