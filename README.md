@@ -9,9 +9,9 @@ This is using mu4e - http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top, thi
 - read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format
 - use [smtpmail](https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html) lib to send emails
 
-# pre-requisite
+# Pre-requisite
 
-## programs
+## Programs
 
 Install offlineimap + mu.
 
@@ -19,7 +19,30 @@ Install offlineimap + mu.
 sudo aptitude install -y offlineimap mu
 ```
 
-## convention
+# Install
+
+This is compatible with [emacs-live-packs](https://github.com/ardumont/emacs-live-packs) and [prelude-packs](https://github.com/ardumont/prelude-packs).
+
+## [emacs-live-packs](https://github.com/ardumont/emacs-live-packs)
+
+Add this snippet in your `.emacs-live.el`:
+```lisp
+(emacs-live-packs/add-live-packs "~/.emacs-live-packs/" '("mail-pack"))
+```
+
+## [prelude-packs](https://github.com/ardumont/prelude-packs)
+
+Add this snippet in your `prelude-packs.el`:
+```lisp
+(prelude-packs/load-packs "~/.prelude-packs/" '("mail-pack"))
+```
+
+## Standard emacs
+
+You can of course simply install from emacs.
+But you'll need this small template of code to https://github.com/ardumont/install-packages-pack/blob/master/init.el.
+
+# Conventions
 
 Some established conventions:
 - the root maildir is expected by default to be *~/.mails*
@@ -35,7 +58,7 @@ For example, mailpack expects *someone@somewhere.com* to be stored on disk at *~
 
 This can be changed through those variables:
 
-``` elisp
+```lisp
 (defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
   "The root folder where you store your maildirs.")
 
@@ -52,38 +75,30 @@ Otherwise (automatic mode), each time the user will compose an email, it will be
 By default t.")
 ```
 
-Simply change the value by:
+Simply change the variable to the values you wish:
 
-```elisp
+```lisp
 (setq variable value)
+```
+
+Then execute the code <kbd>M-x eval-last-sexp</kbd>.
+
+Here is a sample:
+
+```lisp
+(setq *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/Maildir"))
+(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo"))
+(setq *MAIL-PACK-PERIOD-FETCH-MAIL* 3600)
+(setq *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* nil)
 ```
 
 Then reload the mail-pack.
 
-## load/reload
+## Load/reload
 
-If you are in need of reloading the mail-pack (for example, change in the ~/.authinfo.gpg), use:
+If you are in need of reloading the mail-pack because of some change in your setup (you added or removed an account in your ~/.authinfo.gpg for example), use:
 
 <kbd>M-x mail-pack/load-mail-pack!</kbd>
-
-
-# Install
-
-This is compatible with [emacs-live-packs](https://github.com/ardumont/emacs-live-packs) and [prelude-packs](https://github.com/ardumont/prelude-packs).
-
-## [emacs-live-packs](https://github.com/ardumont/emacs-live-packs)
-
-Add this snippet in your `.emacs-live.el`:
-```elisp
-(emacs-live-packs/add-live-packs "~/.emacs-live-packs/" '("mail-pack"))
-```
-
-## [prelude-packs](https://github.com/ardumont/prelude-packs)
-
-Add this snippet in your `prelude-packs.el`:
-```elisp
-(prelude-packs/load-packs "~/.prelude-packs/" '("mail-pack"))
-```
 
 # Setup
 
@@ -108,7 +123,7 @@ machine description mail tony@gmail.com smtp-server smtp.gmail.com firstname Log
 machine smtp.gmail.com login tony@gmail.com port 587 password your-password-or-your-password-generated-for-emacs-in-google-account
 ```
 
-## Multiple account
+## Multiple accounts
 
 It's the same as for one account except that you need to prefix the `description` with the number of the account.
 
@@ -141,6 +156,6 @@ For this, use:
 
 this will prompt you with the account to set as main.
 
-# run
+# Run
 
 `M-x mu4e` or `C-c m e`
