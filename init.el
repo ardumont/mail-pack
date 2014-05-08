@@ -212,7 +212,7 @@ If all is ok, return the creds-file's content, nil otherwise."
                               ;; (:tags          . 10)
                               (:subject))
         ;; see format-time-string for the format - here french readable
-        mu4e-headers-date-format "%d/%m/%Y %H:%M"
+        mu4e-headers-date-format "%Y-%m-%d %H:%M"
         ;; universal date
         ;; mu4e-headers-date-format "%FT%T%z"
         ;; only consider email addresses that were seen in personal messages
