@@ -176,12 +176,12 @@ This is the main menu when you start mu4e.
 Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
 <kbd>U</kbd>       | Launch offlineimap + mu for indexing
-<kbd>c/C</kbd>     | Compose an email (in interactive mode, will ask for your account if multiple)
+<kbd>c/C</kbd>     | Compose an message (in interactive mode, will ask for your account if multiple)
 <kbd>j</kbd>       | Access to maildir folders
 <kbd>j i</kbd>     | Jump to inbox folder
-<kbd>j s</kbd>     | Jump to sent emails folder
-<kbd>j o</kbd>     | Jump to other emails folder
-<kbd>s</kbd>       | Search through your email through specific *mu* request, some examples: http://www.djcbsoftware.nl/code/mu/mu4e/Queries.html#Queries
+<kbd>j s</kbd>     | Jump to sent messages folder
+<kbd>j o</kbd>     | Jump to other messages folder
+<kbd>s</kbd>       | Search through your message through specific *mu* request, some examples: http://www.djcbsoftware.nl/code/mu/mu4e/Queries.html#Queries
 <kbd>b</kbd>       | Access to bookmarks (pre-recorded searches)
 <kbd>b u</kbd>     | Access to all unread messages
 <kbd>b U</kbd>     | Access to all unread messages from today
@@ -194,19 +194,19 @@ Keybindings        | Description
 ## mu4e-headers
 
 This is the menu you see when jumping to a specific maildir folder or using bookmarks.
-This presents an email lists.
-The buffer is in a dired similar mode. You can mark emails and execute those marks with `x`.
+This presents an message lists.
+The buffer is in a dired similar mode. You can mark messages and execute those marks with `x`.
 
 Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
 <kbd>R/r</kbd>     | Compose reply at point
-<kbd>f</kbd>       | Forward email at point
-<kbd>n</kbd>       | Next email in list
-<kbd>p</kbd>       | Previous email in list
-<kbd>Enter/o</kbd> | Read email at point
-<kbd>Space</kbd>   | When reading an email, scroll forward the email's content. When email finished, open the next one.
+<kbd>f</kbd>       | Forward message at point
+<kbd>n</kbd>       | Next message in list
+<kbd>p</kbd>       | Previous message in list
+<kbd>Enter/o</kbd> | Read message at point
+<kbd>Space</kbd>   | When reading an message, scroll forward the message's content. When message finished, open the next one.
 <kbd>?</kbd>       | Mark as unread
-<kbd>a</kbd>       | Archive the email
+<kbd>a</kbd>       | Archive the message
 <kbd>d</kbd>       | Move to trash
 <kbd>D</kbd>       | Delete
 <kbd>u</kbd>       | Remove mark at point
@@ -214,18 +214,17 @@ Keybindings        | Description
 <kbd>x</kbd>       | Execute
 <kbd>q<kbd>        | Quit
 
-## Sending email
+## Sending message
 
-When composing an email, you have some convenients bindings too.
+When composing a message, you have some convenients bindings too.
 
 Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
-<kbd>C-c C-c</kbd> | Send the email
-<kbd>C-c C-b</kbd> | Move directly to the body of the message
 <kbd>C-c C-c</kbd> | Send the message and close the buffer
+<kbd>C-c C-k</kbd> | Do not save the message as draft and close the buffer
+<kbd>C-c C-b</kbd> | Move the caret directly to the body of the message
 <kbd>C-c C-d</kbd> | Do not send the message but save as draft and bury the buffer
 <kbd>C-c M-f</kbd> | insert file's content at point
 <kbd>C-c C-a</kbd> | Insert file as attachment
-<kbd>C-c C-k</kbd> | Do not save the message as draft and close the buffer
 <kbd>C-c TAB</kbd> | Move to the signature of the message
 <kbd>C-c ?</kbd>   | Display the bindings for more
