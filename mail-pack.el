@@ -341,7 +341,5 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
       "Whatever you choose, reference the file you use in your emacs configuration:\n"
       "(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name \"~/.authinfo\"))"))))
 
-(mail-pack/load-pack!)
-
 (provide 'mail-pack)
 ;;; mail-pack.el ends here
