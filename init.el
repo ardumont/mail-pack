@@ -145,7 +145,13 @@ If all is ok, return the creds-file's content, nil otherwise."
               (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
               (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
               (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
-              (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)))
+              (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)
+
+              (define-key 'mu4e-headers-mode-map (kbd "a") 'mu4e-headers-mark-for-refile)
+              (define-key 'mu4e-headers-mode-map (kbd "c") 'mu4e-compose-new)
+              (define-key 'mu4e-headers-mode-map (kbd "e") 'mu4e-compose-edit)
+              (define-key 'mu4e-headers-mode-map (kbd "f") 'mu4e-compose-forward)
+              (define-key 'mu4e-headers-mode-map (kbd "r") 'mu4e-compose-reply)))
 
   (global-set-key (kbd "C-c e m") 'mu4e)
 
