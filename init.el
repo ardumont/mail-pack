@@ -10,30 +10,40 @@
                  google-contacts
                  offlineimap))
 
+;; emacs internal libs
 (require 'gnus)
+(require 'epa-file)
+(require 'smtpmail)
+
+;; external libs - installed from marmalade/melpa
 (require 'creds)
 (require 'dash)
 (require 's)
-(require 'smtpmail)
 (require 'google-contacts)
-(require 'google-contacts-gnus)
 (require 'google-contacts-message)
 (require 'offlineimap)
 
-;; install mu in your system `sudo aptitude install -y mu`
+;; external libs (installed from package manager)
+
+;; install mu in your system `sudo aptitude install -y mu` and update the path on your machine to mu4e
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 
 (require 'mu4e)
 
-;; ===================== setup file
+;; ===================== Setup
 
 ;; activate option to keep the passphrase (it's preferable to use gpg-agent)
 (setq epa-file-cache-passphrase-for-symmetric-encryption t)
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
-(defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails"))
-(defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
-(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600 "Number of seconds between fetch + indexing. Default to 600 seconds.")
+(defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
+  "The root folder where you store your maildirs.")
+
+(defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg")
+  "The credentials file where you store your email informations. This can be plain text too.")
+
+(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600
+  "Number of seconds between fetch + indexing. Default to 600 seconds.")
 
 (defvar *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t
   "Let the user decide if (s)he wants to choose the account to use when composing.
@@ -41,7 +51,7 @@ If set to t, the main account will be automatically be chosen (to change the mai
 Otherwise, each time the user will compose an email, it will be asked to choose the account to use.
 By default t.")
 
-;; ===================== setup function
+;; ===================== functions
 
 (defun mail-pack/log (str) "A log function for the pack."
   (message "Mail Pack - %s" str))
@@ -291,7 +301,7 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
   ;; install bindings and hooks
   (mail-pack/--setup-keybindings-and-hooks!))
 
-;; ===================== setup routine
+;; ===================== Starting the mode
 
 (-if-let (creds-file-content (mail-pack/setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*))
     (progn
