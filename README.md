@@ -16,9 +16,9 @@ mail-pack will:
 - [Pre-requisite](#pre-requisite)
 	- [Programs](#programs)
 - [Install](#install)
-	- [[emacs-live-packs](https://github.com/ardumont/emacs-live-packs)](#emacs-live-packshttpsgithubcomardumontemacs-live-packs)
+	- [bare emacs24](#bare-emacs24)
 	- [[prelude-packs](https://github.com/ardumont/prelude-packs)](#prelude-packshttpsgithubcomardumontprelude-packs)
-	- [Standard emacs](#standard-emacs)
+	- [[emacs-live-packs](https://github.com/ardumont/emacs-live-packs)](#emacs-live-packshttpsgithubcomardumontemacs-live-packs)
 - [Conventions](#conventions)
 	- [Load/reload](#loadreload)
 - [Setup](#setup)
@@ -44,14 +44,16 @@ sudo aptitude install -y offlineimap mu gnutls
 
 # Install
 
-This is compatible with [emacs-live-packs](https://github.com/ardumont/emacs-live-packs) and [prelude-packs](https://github.com/ardumont/prelude-packs).
+You can install it using:
+- bare emacs24
+- [prelude-packs](https://github.com/ardumont/prelude-packs)
+- [emacs-live-packs](https://github.com/ardumont/emacs-live-packs)
 
-## [emacs-live-packs](https://github.com/ardumont/emacs-live-packs)
+## Bare emacs24
 
-Add this snippet in your `.emacs-live.el`:
-```lisp
-(emacs-live-packs/add-live-packs "~/.emacs-live-packs/" '("mail-pack"))
-```
+You can of course simply install from emacs.
+But you'll need this small template of code to https://github.com/ardumont/install-packages-pack/blob/master/init.el.
+
 
 ## [prelude-packs](https://github.com/ardumont/prelude-packs)
 
@@ -60,10 +62,12 @@ Add this snippet in your `prelude-packs.el`:
 (prelude-packs/load-packs "~/.prelude-packs/" '("mail-pack"))
 ```
 
-## Standard emacs
+## [emacs-live-packs](https://github.com/ardumont/emacs-live-packs)
 
-You can of course simply install from emacs.
-But you'll need this small template of code to https://github.com/ardumont/install-packages-pack/blob/master/init.el.
+Add this snippet in your `.emacs-live.el`:
+```lisp
+(emacs-live-packs/add-live-packs "~/.emacs-live-packs/" '("mail-pack"))
+```
 
 # Conventions
 
