@@ -102,8 +102,10 @@ If all is ok, return the creds-file's content, nil otherwise."
 
 (defun mail-pack/choose-main-account! (possible-accounts)
   "Permit the user to choose an account from the optional ACCOUNT-LIST as main account. Return the chosen account."
-  (completing-read (format "Compose with account: (%s) " (s-join "/" possible-accounts))
-                   possible-accounts nil t nil nil (car possible-accounts)))
+  (if (< 1 (length possible-accounts))
+      (completing-read (format "Compose with account: (%s) " (s-join "/" possible-accounts))
+                       possible-accounts nil t nil nil (car possible-accounts))
+    (car possible-accounts)))
 
 (defun mail-pack/set-main-account! ()
   (interactive)
