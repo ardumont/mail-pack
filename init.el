@@ -118,14 +118,16 @@ If all is ok, return the creds-file's content, nil otherwise."
   "Set the account. When composing a new message, ask the user to choose. When replying/forwarding, determine automatically the account to use."
   (let* ((possible-accounts       (mail-pack/--maildir-accounts accounts))
          (composed-parent-message (mail-pack/--compute-composed-message!))
-         ;; determine which account to use
-         (account (if composed-parent-message
-                      ;; when replying/forwarding a message
-                      (mail-pack/--retrieve-account composed-parent-message possible-accounts)
-                    (if *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT*
-                        ;; or let the user choose which account he want to compose its mail
-                        (mail-pack/choose-main-account! possible-accounts)
-                      (mail-pack/--maildir-from-email user-mail-address)))))
+         ;; when replying/forwarding a message
+         (retrieved-account (when composed-parent-message
+                              (mail-pack/--retrieve-account composed-parent-message possible-accounts)))
+         (account           (if retrieved-account
+                                retrieved-account
+                              ;; otherwise we need to choose (interactively or automatically) which account to choose
+                              (if *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT*
+                                  ;; or let the user choose which account he want to compose its mail
+                                  (mail-pack/choose-main-account! possible-accounts)
+                                (mail-pack/--maildir-from-email user-mail-address)))))
     (if account
         (-> account
           (assoc accounts)
