@@ -4,7 +4,7 @@ mail-pack
 Mail-pack is an emacs lib to setup one's client accounts email through a unique [~/.authinfo.gpg](http://www.emacswiki.org/emacs-en/GnusAuthinfo) (or simply plain *~/.authinfo*) file.
 
 This is using mu4e - http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top, this will:
-- synchronize your accounts through offlineimap (which needs to be setup otherwise, see https://github.com/ardumont/dot-files/blob/master/.offlineimaprc for an example) in [Maildir](https://en.wikipedia.org/wiki/Maildir) format
+- synchronize your accounts through [offlineimap](http://docs.offlineimap.org/en/latest/index.html) (which needs to be setup too, see https://github.com/ardumont/dot-files/blob/master/.offlineimaprc for an example) in [Maildir](https://en.wikipedia.org/wiki/Maildir) format
 - index local maildirs through [mu](http://www.djcbsoftware.nl/code/mu/)
 - read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format
 - use [smtpmail](https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html) lib to send emails
@@ -13,10 +13,10 @@ This is using mu4e - http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top, thi
 
 ## Programs
 
-Install offlineimap + mu.
+Install [offlineimap](http://docs.offlineimap.org/en/latest/index.html) (sync emails account to maildir) + [mu](http://www.djcbsoftware.nl/code/mu/) (index maildirs) + [gnutls](http://gnutls.org/) (for secure protocol communication).
 
 ```sh
-sudo aptitude install -y offlineimap mu
+sudo aptitude install -y offlineimap mu gnutls
 ```
 
 # Install
@@ -158,4 +158,70 @@ this will prompt you with the account to set as main.
 
 # Run
 
-`M-x mu4e` or `C-c m e`
+To start using mu4e: `M-x mu4e` or `C-c m e`
+
+Convention to read keybindings:
+- <kbd>a</kbd>   hit *a*
+- <kbd>a/A</kbd> hit *a* or *A*
+- <kbd>b i</kbd> hit *b* followed by *i*
+- <kbd>C-c</kbd> Maintain *CTRL* and hit *c*
+
+## mu4e-main
+
+This is the main menu when you start mu4e.
+
+Keybindings        | Action
+-------------------|----------------------------------------------------------------------------------------------------------------------------------
+<kbd>U</kbd>       | Launch offlineimap + mu for indexing
+<kbd>c/C</kbd>     | Compose an email (in interactive mode, will ask for your account if multiple)
+<kbd>j</kbd>       | Jump menu
+<kbd>j i</kbd>     | Jump to inbox
+<kbd>j s</kbd>     | Jump to sent mail
+<kbd>s</kbd>       | Search through your mail through specific mu request, some examples: http://www.djcbsoftware.nl/code/mu/mu4e/Queries.html#Queries
+<kbd>b</kbd>       | Access to bookmarks (pre-recorded search)
+<kbd>b u</kbd>     | Access to all unread messages
+<kbd>b U</kbd>     | Access to all unread messages from today
+<kbd>b t</kbd>     | Access to today's messages
+<kbd>b t</kbd>     | Access to last seven days messages
+<kbd>b p</kbd>     | Access to messages with images
+<kbd>b B</kbd>     | Access to messages with big attachments (more than 5Mb)
+<kbd>q</kbd>       | Quit
+
+## mu4e-headers
+
+This is the menu you see when jumping to a specific maildir folder or using bookmarks.
+This presents an email lists.
+The buffer is in a dired similar mode. You can mark emails and execute those marks with `x`.
+
+Keybindings        | Action
+-------------------|----------------------------------------------------------------------------------------------------------------------------------
+<kbd>R/r</kbd>     | Compose reply at point
+<kbd>f</kbd>       | Forward email at point
+<kbd>n</kbd>       | Next email in list
+<kbd>p</kbd>       | Previous email in list
+<kbd>Enter/o</kbd> | Read email at point
+<kbd>Space</kbd>   | When reading an email, scroll forward the email's content. When email finished, open the next one.
+<kbd>?</kbd>       | Mark as unread
+<kbd>a</kbd>       | Archive the email
+<kbd>d</kbd>       | Move to trash
+<kbd>D</kbd>       | Delete
+<kbd>u</kbd>       | Remove mark at point
+<kbd>U</kbd>       | Remove all marks
+<kbd>x</kbd>       | Execute
+<kbd>q<kbd>        | Quit
+
+## Sending email
+
+When composing an email, you have some convenients bindings too.
+
+Keybindings        | Action
+-------------------|----------------------------------------------------------------------------------------------------------------------------------
+<kbd>C-c C-c</kbd> | Send the email
+<kbd>C-c C-b</kbd> | Move directly to the body of the message
+<kbd>C-c C-c</kbd> | Send the message and close the buffer
+<kbd>C-c C-d</kbd> | Do not send the message but save as draft and bury the buffer
+<kbd>C-c M-f</kbd> | insert file's content at point
+<kbd>C-c C-a</kbd> | Insert file as attachment
+<kbd>C-c C-k</kbd> | Do not save the message as draft and close the buffer
+<kbd>C-c TAB</kbd> | Move to the signature of the message
+<kbd>C-c ?</kbd>   | Display the bindings for more
