@@ -35,6 +35,12 @@
 (defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
 (defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600 "Number of seconds between fetch + indexing. Default to 600 seconds.")
 
+(defvar *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t
+  "Let the user decide if (s)he wants to choose the account to use when composing.
+If set to t, the main account will be automatically be chosen (to change the main account, use M-x mail-pack/set-main-account!
+Otherwise, each time the user will compose an email, it will be asked to choose the account to use.
+By default t.")
+
 ;; ===================== setup function
 
 (defun mail-pack/log (str) "A log function for the pack."
@@ -106,7 +112,10 @@ If all is ok, return the creds-file's content, nil otherwise."
          (account (if composed-parent-message
                       ;; when replying/forwarding a message
                       (mail-pack/--retrieve-account composed-parent-message possible-accounts)
-                    (mail-pack/choose-main-account! possible-accounts))))
+                    (if *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT*
+                        ;; or let the user choose which account he want to compose its mail
+                        (mail-pack/choose-main-account! possible-accounts)
+                      (mail-pack/--maildir-from-email user-mail-address)))))
     (if account
         (-> account
           (assoc accounts)
