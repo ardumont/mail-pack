@@ -11,12 +11,12 @@
                  google-contacts
                  offlineimap))
 
-;; emacs internal libs
+;; Internal libs
 (require 'gnus)
 (require 'epa-file)
 (require 'smtpmail)
 
-;; external libs - installed from marmalade/melpa
+;; External libs - installed from marmalade/melpa
 (require 'creds)
 (require 'dash)
 (require 's)
@@ -24,7 +24,7 @@
 (require 'google-contacts-message)
 (require 'offlineimap)
 
-;; external libs (installed from package manager)
+;; External libs (installed from package manager)
 
 ;; install mu in your system `sudo aptitude install -y mu` and update the path on your machine to mu4e
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
