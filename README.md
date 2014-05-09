@@ -52,8 +52,18 @@ You can install it using:
 ## Bare emacs24
 
 You can of course simply install from emacs.
-But you'll need this small template of code to https://github.com/ardumont/install-packages-pack/blob/master/init.el.
 
+As a pre-requisite though, you'll need this small [template of code](https://raw.githubusercontent.com/ardumont/install-packages-pack/master/install-packages-pack.el) .
+
+You can retrieve it with the following snippet of code to place in a scratch buffer and evaluate (`M-x eval-buffer`):
+
+```elisp
+(progn
+  (switch-to-buffer
+    (url-retrieve-synchronously
+      "https://raw.githubusercontent.com/ardumont/install-packages-pack/master/install-packages-pack.el"))
+      (package-install-from-buffer))
+```
 
 ## [prelude-packs](https://github.com/ardumont/prelude-packs)
 
