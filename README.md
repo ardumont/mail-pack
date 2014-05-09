@@ -4,7 +4,7 @@ mail-pack
 Setup user's email accounts through a unique [~/.authinfo.gpg](http://www.emacswiki.org/emacs-en/GnusAuthinfo) (or simply plain *~/.authinfo*) file.
 
 mail-pack will:
-- synchronize your accounts through [offlineimap](http://docs.offlineimap.org/en/latest/index.html) (which needs to be setup too, see https://github.com/ardumont/dot-files/blob/master/.offlineimaprc for an example) in [Maildir](https://en.wikipedia.org/wiki/Maildir) format
+- synchronize your accounts through [offlineimap](http://docs.offlineimap.org/en/latest/index.html) (which needs to be setup too, see [this link for an example](https://github.com/ardumont/dot-files/blob/master/.offlineimaprc)) in [Maildir](https://en.wikipedia.org/wiki/Maildir) format
 - index local maildir folders through [mu](http://www.djcbsoftware.nl/code/mu/) use
 - read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format through [mu4e](http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top) use
 - use [smtpmail](https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html) lib to send emails
@@ -14,13 +14,16 @@ mail-pack will:
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 - [Pre-requisite](#pre-requisite)
-	- [Programs](#programs)
+	- [Software](#software)
+		- [Offlineimap](#offlineimap)
+		- [Mu](#mu)
 - [Install](#install)
-	- [bare emacs24](#bare-emacs24)
+	- [Bare emacs24](#bare-emacs24)
 	- [[prelude-packs](https://github.com/ardumont/prelude-packs)](#prelude-packshttpsgithubcomardumontprelude-packs)
 	- [[emacs-live-packs](https://github.com/ardumont/emacs-live-packs)](#emacs-live-packshttpsgithubcomardumontemacs-live-packs)
 - [Conventions](#conventions)
 	- [Load/reload](#loadreload)
+	- [Hooks](#hooks)
 - [Setup](#setup)
 	- [One account](#one-account)
 	- [Multiple accounts](#multiple-accounts)
@@ -34,12 +37,27 @@ mail-pack will:
 
 # Pre-requisite
 
-## Programs
+## Software
 
 Install [offlineimap](http://docs.offlineimap.org/en/latest/index.html) (sync emails account to maildir) + [mu](http://www.djcbsoftware.nl/code/mu/) (index maildirs) + [gnutls](http://gnutls.org/) (for secure protocol communication).
 
 ```sh
 sudo aptitude install -y offlineimap mu gnutls
+```
+
+### Offlineimap
+
+Setup and run offlineimap to synchronize your maildir.
+You can see [my setup](https://github.com/ardumont/dot-files/blob/master/.offlineimaprc) as an example.
+
+### Mu
+
+The first time around, you need to index locally your maildirs.
+
+Provided that your maildirs are in the root folder *~/.mails*:
+
+```sh
+mu index --maildir=~/.mails
 ```
 
 # Install
