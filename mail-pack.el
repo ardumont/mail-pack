@@ -26,10 +26,14 @@
 
 ;; External libs (installed from package manager)
 
-;; install mu in your system `sudo aptitude install -y mu` and update the path on your machine to mu4e
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
+(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4" "The mu4e installation folder.")
 
-(require 'mu4e)
+(if (file-exists-p *MAIL-PACK-MU4E-INSTALL-FOLDER*)
+    (progn
+      (add-to-list 'load-path *MAIL-PACK-MU4E-INSTALL-FOLDER*)
+      (require 'mu4e))
+  (mail-pack/log "As a pre-requisite, you need to install the mu package and reference the mu4e installation folder for this pack to work."))
 
 ;; ===================== Setup
 
