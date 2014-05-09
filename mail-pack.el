@@ -30,7 +30,7 @@
 (setq epa-file-cache-passphrase-for-symmetric-encryption t)
 
 ;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
-(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4"
+(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4e"
   "The mu4e installation folder.")
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
