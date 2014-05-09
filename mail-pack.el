@@ -303,8 +303,11 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
   (-when-let (nb-accounts (mail-pack/--nb-accounts creds-file-content))
     (when (< 1 nb-accounts)
       (->> (number-sequence 2 nb-accounts)
-        (--map (mail-pack/--setup-account creds-file creds-file-content (format "%s" it)))
-        (--map (add-to-list '*MAIL-PACK-ACCOUNTS* it)))))
+        (mapc (lambda (account-entry-number)
+                (->> account-entry-number
+                  (format "%s")
+                  (mail-pack/--setup-account creds-file creds-file-content)
+                  (add-to-list '*MAIL-PACK-ACCOUNTS*)))))))
 
   ;; main account setup
   (add-to-list '*MAIL-PACK-ACCOUNTS* (mail-pack/--setup-account creds-file creds-file-content))
