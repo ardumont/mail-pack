@@ -68,13 +68,14 @@ Returns nil if problem."
       (require 'mu4e))))
 
 (defun mail-pack/setup-possible-p (creds-file)
-  "Check if the setup is possible by checking the existence of the file creds-file
-and that the entries 'imap.gmail.com', 'smtp.gmail.com', and 'email-description' are provided.
+  "Check if CREDS-FILE exists and contain at least one account.
 If all is ok, return the creds-file's content, nil otherwise."
   (when (file-exists-p creds-file)
-    (let ((creds-file-content (creds/read-lines creds-file)))
-      (when (and (creds/get creds-file-content "email-description")
-                 (creds/get creds-file-content "smtp.gmail.com"))
+    (let* ((creds-file-content (creds/read-lines creds-file))
+           (email-description  (creds/get creds-file-content "email-description"))
+           (account-server     (creds/get-entry email-description "smtp-server"))
+           (account-email      (creds/get-entry email-description "mail")))
+      (when (creds/get-with creds-file-content `(("machine" . ,account-server) ("login" . ,account-email)))
         creds-file-content))))
 
 (defun mail-pack/--nb-accounts (creds-file-content)
