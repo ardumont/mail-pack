@@ -86,6 +86,10 @@ For example, mailpack expects *someone@somewhere.com* to be stored on disk at *~
 This can be changed through those variables:
 
 ```lisp
+;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
+(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4"
+  "The mu4e installation folder.")
+
 (defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
   "The root folder where you store your maildirs.")
 
@@ -102,7 +106,7 @@ Otherwise (automatic mode), each time the user will compose an email, it will be
 By default t.")
 ```
 
-Simply change the variable to the values you wish:
+Simply change the variable(s) to the value(s) you wish:
 
 ```lisp
 (setq variable value)
@@ -110,22 +114,41 @@ Simply change the variable to the values you wish:
 
 Then execute the code <kbd>M-x eval-last-sexp</kbd>.
 
-Here is a sample:
+Here is a sample (adapt this to your needs):
 
 ```lisp
+(setq *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs24/site-lisp/mu4e")
 (setq *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/Maildir"))
 (setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo"))
 (setq *MAIL-PACK-PERIOD-FETCH-MAIL* 3600)
 (setq *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* nil)
 ```
 
-Then reload the mail-pack.
+Then reload the <kbd>mail-pack/load-mail-pack!<kbd> routine.
+
+## Hooks
+
+mail-pack defines one hook *mail-pack/setup-hooks* which is run just before loading the mail-pack setup.
+
+Simply define one like this for example (adapt this to your needs):
+
+```lisp
+(add-hook 'mail-pack/setup-hooks
+          (lambda ()
+            (setq *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4e")
+            (setq *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails"))
+            (setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
+            (setq *MAIL-PACK-PERIOD-FETCH-MAIL* 600)
+            (setq *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t)))
+            ```
+
+Then reload the <kbd>mail-pack/load-mail-pack!<kbd> routine.
 
 ## Load/reload
 
-If you are in need of reloading the mail-pack because of some change in your setup (you added or removed an account in your ~/.authinfo.gpg for example), use:
+If you are in need of reloading the mail-pack because of some changes in your setup (you added or removed an account in your ~/.authinfo.gpg for example), use:
 
-<kbd>M-x mail-pack/load-mail-pack!</kbd>
+<kbd>M-x mail-pack/load-pack!</kbd>
 
 # Setup
 

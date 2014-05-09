@@ -24,21 +24,14 @@
 (require 'google-contacts-message)
 (require 'offlineimap)
 
-;; External libs (installed from package manager)
-
-;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
-(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4" "The mu4e installation folder.")
-
-(if (file-exists-p *MAIL-PACK-MU4E-INSTALL-FOLDER*)
-    (progn
-      (add-to-list 'load-path *MAIL-PACK-MU4E-INSTALL-FOLDER*)
-      (require 'mu4e))
-  (mail-pack/log "As a pre-requisite, you need to install the mu package and reference the mu4e installation folder for this pack to work."))
-
 ;; ===================== Setup
 
 ;; activate option to keep the passphrase (it's preferable to use gpg-agent)
 (setq epa-file-cache-passphrase-for-symmetric-encryption t)
+
+;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
+(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4"
+  "The mu4e installation folder.")
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
 (defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
@@ -62,8 +55,17 @@ By default t (so interactive).")
 
 ;; ===================== functions
 
-(defun mail-pack/log (str) "A log function for the pack."
+(defun mail-pack/log (str)
+  "Log STR with specific pack prefix."
   (message "Mail Pack - %s" str))
+
+(defun mail-pack/pre-requisites-ok-p! ()
+  "Ensure that the needed installation pre-requisites are met.
+Returns nil if problem."
+  (when (file-exists-p *MAIL-PACK-MU4E-INSTALL-FOLDER*)
+    (progn
+      (add-to-list 'load-path *MAIL-PACK-MU4E-INSTALL-FOLDER*)
+      (require 'mu4e))))
 
 (defun mail-pack/setup-possible-p (creds-file)
   "Check if the setup is possible by checking the existence of the file creds-file
@@ -325,32 +327,47 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
 
 ;; ===================== Starting the mode
 
+(defvar mail-pack/setup-hooks nil "Use hooks for user to set their setup override.")
+(setq mail-pack/setup-hooks) ;; reset hooks
+
 (defun mail-pack/load-pack! ()
+  "Mail pack loading routine.
+This will check if the pre-requisite are met.
+If ok, then checks if an account file exists the minimum required (1 account).
+If ok then do the actual loading.
+Otherwise, will log an error message with what's wrong to help the user fix it."
   (interactive)
-  (-if-let (creds-file-content (mail-pack/setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*))
-      (progn
-        (mail-pack/log (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
-        (mail-pack/setup *MAIL-PACK-CREDENTIALS-FILE* creds-file-content)
-        (mail-pack/log "Setup done!"))
-    (mail-pack/log
-     (concat
-      "You need to setup your credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work. (The credentials file can be secured with gpg or not).\n"
-      "\n"
-      "A single account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
-      "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n"
-      "machine smtp.gmail.com login <your-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-      "\n"
-      "A multiple account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
-      "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
-      "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-      "machine 2-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
-      "machine smtp.gmail.com login <2nd-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
-      "machine 3-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
-      "...\n"
-      "\n"
-      "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.\n"
-      "Whatever you choose, reference the file you use in your emacs configuration:\n"
-      "(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name \"~/.authinfo\"))"))))
+  ;; run user defined hooks
+  (run-hooks 'mail-pack/setup-hooks)
+  ;; at last the checks and load pack routine
+  (if (mail-pack/pre-requisites-ok-p!)
+    (-if-let (creds-file-content (mail-pack/setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*))
+        (progn
+          (mail-pack/log (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
+          (mail-pack/setup *MAIL-PACK-CREDENTIALS-FILE* creds-file-content)
+          (mail-pack/log "Setup done!"))
+      (mail-pack/log
+       (concat
+        "You need to setup your credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work. (The credentials file can be secured with gpg or not).\n"
+        "\n"
+        "A single account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
+        "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n"
+        "machine smtp.gmail.com login <your-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
+        "\n"
+        "A multiple account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
+        "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
+        "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
+        "machine 2-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
+        "machine smtp.gmail.com login <2nd-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
+        "machine 3-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
+        "...\n"
+        "\n"
+        "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.\n"
+        "Whatever you choose, reference the file you use in your emacs configuration:\n"
+        "(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name \"~/.authinfo\"))")))
+    (mail-pack/log "As a pre-requisite, you need to install the offlineimap and mu packages.
+For example, on debian-based system, `sudo aptitude install -y offlineimap mu`...
+When mu is installed, you also need to reference the mu4e (installed with mu) installation folder for this pack to work.")))
 
 (provide 'mail-pack)
 ;;; mail-pack.el ends here
