@@ -38,19 +38,23 @@
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
 (defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
-  "The root folder where you store your maildirs.")
+  "The root folder where you store your maildirs folder.")
 
 (defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg")
-  "The credentials file where you store your email informations. This can be plain text too.")
+  "The credentials file where you store your email information.
+This can be plain text too.")
 
 (defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600
-  "Number of seconds between fetch + indexing. Default to 600 seconds.")
+  "Number of seconds between fetch + indexing.
+Default to 600 seconds.")
 
 (defvar *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t
-  "Let the user decide if (s)he wants to choose the account to use when composing.
-If set to t, the main account will be automatically be chosen (to change the main account, use M-x mail-pack/set-main-account!
-Otherwise, each time the user will compose an email, it will be asked to choose the account to use.
-By default t.")
+  "Let the user decide which account to use for composing a message.
+If set to nil (automatic), the main account will be automatically chosen.
+To change the main account, use `M-x mail-pack/set-main-account!`.
+Otherwise (interactive), the user will be asked to choose the account to use.
+If only 1 account, this is the chosen account.
+By default t (so interactive).")
 
 ;; ===================== functions
 
