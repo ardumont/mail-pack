@@ -24,7 +24,7 @@
 (require 'google-contacts-message)
 (require 'offlineimap)
 
-;; ===================== Setup
+;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
 ;; activate option to keep the passphrase (it's preferable to use gpg-agent)
 (setq epa-file-cache-passphrase-for-symmetric-encryption t)
@@ -53,6 +53,13 @@ Otherwise (interactive), the user will be asked to choose the account to use.
 If only 1 account, this is the chosen account.
 By default t (so interactive).")
 
+;; ===================== Static setup (user must not touch this)
+
+(defvar *MAIL-PACK-ACCOUNTS* nil "User's email accounts.")
+
+(defvar mail-pack/setup-hooks nil "Use hooks for user to set their setup override.")
+(setq mail-pack/setup-hooks) ;; reset hooks
+
 ;; ===================== functions
 
 (defun mail-pack/log (str)
@@ -79,7 +86,7 @@ If all is ok, return the creds-file's content, nil otherwise."
         creds-file-content))))
 
 (defun mail-pack/--nb-accounts (creds-file-content)
-  "Compute how many 'email-description' entries exist? This corresponds to the number of accounts setuped."
+  "In CREDS-FILE-CONTENT, compute how many accounts exist?"
   (--reduce-from (let ((machine (creds/get-entry it "machine")))
                    (if (string-match-p "email-description" machine)
                        (+ 1 acc)
@@ -88,7 +95,9 @@ If all is ok, return the creds-file's content, nil otherwise."
                  creds-file-content))
 
 (defun mail-pack/--find-account (emails-sent-to possible-account)
-  "Given a list of recipients (to, cc, bcc) and a possible account, try to filter the filter with such account."
+  "Determine the account to use in EMAILS-SENT-TO.
+EMAILS-SENT-TO is the addresses in to, cc, bcc from the message received.
+POSSIBLE-ACCOUNT is the actual accounts setup-ed."
   (--filter (string= possible-account (mail-pack/--maildir-from-email it)) emails-sent-to))
 
 (defun mail-pack/--compute-composed-message! ()
@@ -96,8 +105,10 @@ If all is ok, return the creds-file's content, nil otherwise."
   mu4e-compose-parent-message)
 
 (defun mail-pack/--retrieve-account (composed-parent-message possible-accounts)
-  "Try and retrieve the mail account to which the composed-parent-message was sent to (look into the :to, :cc, :bcc fields if we found the right account).
- If all accounts are found, return the first one." ;; TODO look at mu4e-message-contact-field-matches -> (mu4e-message-contact-field-matches msg :to "me@work.com"))
+  "Retrieve the mail account to which the COMPOSED-PARENT-MESSAGE was sent to.
+This will look into the :to, :cc, :bcc fields to find the right account.
+POSSIBLE-ACCOUNTS is the actual lists of accounts setup-ed.
+If all accounts are found, return the first encountered." ;; TODO look at mu4e-message-contact-field-matches -> (mu4e-message-contact-field-matches msg :to "me@work.com"))
   ;; build all the emails recipients (to, cc, bcc)
   (let ((emails-sent-to (mapcar #'cdr (concatenate #'list
                                                    (plist-get composed-parent-message :to)
@@ -129,7 +140,11 @@ If all is ok, return the creds-file's content, nil otherwise."
       mail-pack/--setup-as-main-account!)))
 
 (defun mail-pack/set-account (accounts)
-  "Set the account. When composing a new message, ask the user to choose. When replying/forwarding, determine automatically the account to use."
+  "Set the main account amongst ACCOUNTS.
+When composing a message, in interactive mode, the user chooses the account.
+When composing a message, in automatic mode, the main account is chosen.
+When replying/forwarding, determine automatically the account to use.
+If no account is found, revert to the composing message behavior."
   (let* ((possible-accounts       (mail-pack/--maildir-accounts accounts))
          (composed-parent-message (mail-pack/--compute-composed-message!))
          ;; when replying/forwarding a message
@@ -149,7 +164,7 @@ If all is ok, return the creds-file's content, nil otherwise."
       (error "No email account found!"))))
 
 (defun mail-pack/--setup-keybindings-and-hooks! ()
-  "Install hooks and keybindings."
+  "Install defaults hooks and key bindings."
   (add-hook 'mu4e-headers-mode-hook
             (lambda ()
               (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-view-message)))
@@ -174,7 +189,7 @@ If all is ok, return the creds-file's content, nil otherwise."
             (lambda () (mail-pack/set-account *MAIL-PACK-ACCOUNTS*))))
 
 (defun mail-pack/--label (entry-number label)
-  "Given an entry number, compute the label"
+  "Given an ENTRY-NUMBER, and a LABEL, compute the full label."
   (if (or (null entry-number) (string= "" entry-number))
       label
     (format "%s-%s" entry-number label)))
@@ -260,8 +275,11 @@ If all is ok, return the creds-file's content, nil otherwise."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
-  "Given the CREDS-FILE path, the CREDS-FILE-CONTENT and an optional ENTRY-NUMBER, setup one account.
-If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it's a secondary account."
+  "Setup an account and return the key values structure.
+CREDS-FILE represents the credentials file.
+CREDS-FILE-CONTENT is the content of that same file.
+ENTRY-NUMBER is the optional account number (multiple accounts setup possible).
+When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   (let* ((description-entry        (creds/get creds-file-content (mail-pack/--label entry-number "email-description")))
          (full-name                (mail-pack/--compute-fullname (creds/get-entry description-entry "firstname")
                                                                  (creds/get-entry description-entry "surname")
@@ -300,8 +318,6 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
     ;; In any case, return the account setup vars
     account-setup-vars))
 
-(defvar *MAIL-PACK-ACCOUNTS* nil "User's email Accounts.")
-
 (defun mail-pack/setup (creds-file creds-file-content)
   "Mail pack setup with the CREDS-FILE path and the CREDS-FILE-CONTENT."
   ;; common setup
@@ -327,9 +343,6 @@ If ENTRY-NUMBER is not specified, we are dealing with the main account. Other it
   (mail-pack/--setup-keybindings-and-hooks!))
 
 ;; ===================== Starting the mode
-
-(defvar mail-pack/setup-hooks nil "Use hooks for user to set their setup override.")
-(setq mail-pack/setup-hooks) ;; reset hooks
 
 (defun mail-pack/load-pack! ()
   "Mail pack loading routine.
