@@ -227,21 +227,13 @@ If no account is found, revert to the composing message behavior."
 (defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
-        mu4e-drafts-folder "/[Gmail].Drafts"
-        mu4e-sent-folder   "/[Gmail].Sent Mail"
-        mu4e-trash-folder  "/[Gmail].Trash"
-        mu4e-refile-folder "/[Gmail].All Mail"
-        ;; setup some handy shortcuts
-        mu4e-maildir-shortcuts `(("/INBOX"             . ?i)
-                                 (,mu4e-sent-folder    . ?s)
-                                 (,mu4e-trash-folder   . ?t)
-                                 (,mu4e-drafts-folder  . ?d)
-                                 (,mu4e-refile-folder  . ?a))
         ;; skip duplicates by default
         mu4e-headers-skip-duplicates t
         ;; default page size
-        mu4e-headers-results-limit 500
+        mu4e-headers-results-limit 250
+        ;; default sort ordering
         mu4e~headers-sort-direction 'descending
+        ;; default field ordering
         mu4e~headers-sort-field :date
         ;; don't save message to Sent Messages, GMail/IMAP will take care of this
         mu4e-sent-messages-behavior 'delete
@@ -249,7 +241,7 @@ If no account is found, revert to the composing message behavior."
         mu4e-get-mail-command "offlineimap"
         ;; update every 5 min
         mu4e-update-interval *MAIL-PACK-PERIOD-FETCH-MAIL*
-        mu4e-attachment-dir "~/Downloads"
+        ;; inline images directly in the body message
         mu4e-view-show-images t
         ;; prefer plain text message
         mu4e-view-prefer-html nil
@@ -270,20 +262,18 @@ If no account is found, revert to the composing message behavior."
                               (:subject))
         ;; see format-time-string for the format - here french readable
         mu4e-headers-date-format "%Y-%m-%d %H:%M"
-        ;; universal date
-        ;; mu4e-headers-date-format "%FT%T%z"
         ;; only consider email addresses that were seen in personal messages
         mu4e-compose-complete-only-personal t
         ;; auto complete addresses
         mu4e-compose-complete-addresses t
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-        message-send-mail-function    'smtpmail-send-it
-        smtpmail-stream-type          'starttls
-        starttls-use-gnutls           t
+        message-send-mail-function 'smtpmail-send-it
+        smtpmail-stream-type 'starttls
+        starttls-use-gnutls t
         smtpmail-debug-info t
         smtpmail-debug-verb t
-        ;; empty the hooks
+        ;; empty the hooks (permits to replay setup from scratch)
         mu4e-headers-mode-hook nil
         mu4e-main-mode-hook nil
         mu4e-compose-pre-hook nil)
@@ -304,6 +294,11 @@ If no account is found, revert to the composing message behavior."
   "Given the entry ACCOUNT-SETUP-VARS, set the main account vars up."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
+(setq creds-file *MAIL-PACK-CREDENTIALS-FILE*)
+(setq creds-file-content (creds/read-lines "~/.authinfo"))
+(mail-pack/--setup-account creds-file creds-file-content)
+(mail-pack/setup creds-file creds-file-content)
+
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup an account and return the key values structure.
 CREDS-FILE represents the credentials file.
@@ -319,6 +314,11 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
          (signature                (creds/get-entry description-entry "signature-file"))
          (smtp-server              (creds/get-entry description-entry "smtp-server"))
          (mail-address             (creds/get-entry description-entry "mail"))
+         (draft-folder             (creds/get-entry description-entry "draft-folder"))
+         (sent-folder              (creds/get-entry description-entry "sent-folder"))
+         (trash-folder             (creds/get-entry description-entry "trash-folder"))
+         (archive-folder           (creds/get-entry description-entry "archive-folder"))
+         (attachment-folder        (creds/get-entry description-entry "attachment-folder"))
          (smtp-server-entry        (creds/get-with creds-file-content `(("machine" . ,smtp-server) ("login" . ,mail-address))))
          (smtp-port                (creds/get-entry smtp-server-entry "port"))
          (folder-mail-address      (mail-pack/--maildir-from-email mail-address))
@@ -341,7 +341,18 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                                      (smtpmail-smtp-server          ,smtp-server)
                                      (smtpmail-auth-credentials     ,creds-file)
                                      ;; mu4e setup
-                                     (mu4e-maildir ,(expand-file-name folder-root-mail-address)))))
+                                     (mu4e-maildir ,(expand-file-name folder-root-mail-address))
+                                     (mu4e-drafts-folder ,draft-folder)
+                                     (mu4e-sent-folder   ,sent-folder)
+                                     (mu4e-trash-folder  ,trash-folder)
+                                     (mu4e-refile-folder ,archive-folder)
+                                     (mu4e-attachment-dir ,attachment-folder)
+                                     ;; setup some handy shortcuts
+                                     (mu4e-maildir-shortcuts (("/INBOX"        . ?i)
+                                                              (,sent-folder    . ?s)
+                                                              (,trash-folder   . ?t)
+                                                              (,draft-folder   . ?d)
+                                                              (,archive-folder . ?a))))))
     ;; Sets the main account if it is the one!
     (unless entry-number
       (mail-pack/--setup-as-main-account! account-setup-vars))

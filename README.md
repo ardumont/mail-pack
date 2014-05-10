@@ -183,11 +183,11 @@ If you are in need of reloading the mail-pack because of some changes in your se
 ## One account
 
 Create a `~/.authinfo.gpg` file with your email credentials on 2 separates machine lines:
-- one for the email description
-- one for the email credentials for the smtp part
+- one for the email account description (user's email, name, firstname, fullname, x-url, draft folder, sent folder, archive folder, attachment folder, etc...)
+- one for the email account credentials for the smtp part
 
 ```text
-machine email-description mail YOUR-EMAIL smtp-server SMTP-SERVER firstname LOGIN surname SURNAME name NAME x-url SOME-URL-YOU-LIKE mail-host HOSTNAME-OF-YOUR-SERVER
+machine email-description mail YOUR-EMAIL smtp-server SMTP-SERVER firstname LOGIN surname SURNAME name NAME x-url SOME-URL-YOU-LIKE mail-host HOSTNAME-OF-YOUR-SERVER draft-folder SOME-DRAFT-FOLDER sent-folder SOME-SENT-FOLDER trash-folder SOME-TRASH-FOLDER archive-folder SOME-ARCHIVE-FOLDER attachment-folder SOME-ATTACHMENT-FOLDER
 machine SMTP-SERVER login YOUR-EMAIL port 587 password YOUR-PASSWORD-OR-YOUR-PASSWORD-GENERATED-FOR-EMACS-IN-GOOGLE-ACCOUNT
 ```
 
@@ -197,7 +197,7 @@ This is important that those entries values map exactly to the values of the key
 Example:
 
 ```text
-machine email-description mail tony@gmail.com smtp-server smtp.gmail.com firstname Login surname romain name dumont x-url http://adumont.fr/blog/ mail-host arrakis
+machine email-description mail tony@gmail.com smtp-server smtp.gmail.com firstname Login surname romain name dumont x-url http://adumont.fr/blog/ mail-host arrakis draft-folder "/[Gmail].Drafts" sent-folder "/[Gmail].Sent Mail" trash-folder "/[Gmail].Trash" archive-folder "/[Gmail].All Mail" attachment-folder "~/Downloads"
 machine smtp.gmail.com login tony@gmail.com port 587 password your-password-or-your-password-generated-for-emacs-in-google-account
 ```
 
@@ -208,9 +208,9 @@ It's the same as for one account except that you need to prefix the `description
 Here is a possible `~/.authinfo.gpg` for 2 gmail accounts:
 
 ```text
-machine email-description mail some-email@gmail.com surname ardumont x-url some-url mail-host some-mail-host signature-file ~/.signature smtp-server smtp.gmail.com
+machine email-description mail some-email@gmail.com surname ardumont x-url some-url mail-host some-mail-host signature-file ~/.signature smtp-server smtp.gmail.com draft-folder "/[Gmail].Drafts" sent-folder "/[Gmail].Sent Mail" trash-folder "/[Gmail].Trash" archive-folder "/[Gmail].All Mail" attachment-folder "~/Downloads"
 machine smtp.gmail.com login some-email@gmail.com port 587 password some-pass
-machine 2-email-description mail another-email@gmail.com firstname Antoine surname Romain name Dumont signature-file ~/.signature2 smtp-server smtp.gmail.com
+machine 2-email-description mail another-email@gmail.com firstname Antoine surname Romain name Dumont signature-file ~/.signature2 smtp-server smtp.gmail.com draft-folder "/[Gmail].Drafts" sent-folder "/[Gmail].Sent Mail" trash-folder "/[Gmail].Trash" archive-folder "/[Gmail].All Mail" attachment-folder "~/Downloads"
 machine smtp.gmail.com login another-email@gmail.com port 465 password another-pass
 ```
 
