@@ -8,7 +8,6 @@
 (install-packs '(s
                  dash
                  creds
-                 google-contacts
                  offlineimap))
 
 ;; Internal libs
@@ -20,8 +19,6 @@
 (require 'creds)
 (require 'dash)
 (require 's)
-(require 'google-contacts)
-(require 'google-contacts-message)
 (require 'offlineimap)
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
