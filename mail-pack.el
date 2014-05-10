@@ -171,6 +171,7 @@ If no account is found, revert to the composing message behavior."
 
   (add-hook 'mu4e-main-mode-hook
             (lambda ()
+              (define-key 'mu4e-main-mode-map (kbd "u") 'mu4e-update-mail-and-index)
               (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
               (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
               (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)

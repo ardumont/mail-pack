@@ -253,7 +253,7 @@ This is the main menu when you start mu4e.
 
 Keybindings        | Description
 -------------------|----------------------------------------------------------------------------------------------------------------------------------
-<kbd>U</kbd>       | Launch offlineimap + mu for indexing
+<kbd>u/U</kbd>     | Launch synchronizing email accounts (offlineimap) + messages indexing (mu)
 <kbd>c/C</kbd>     | Compose an message (in interactive mode, will ask for your account if multiple)
 <kbd>j</kbd>       | Access to maildir folders
 <kbd>j i</kbd>     | Jump to inbox folder
