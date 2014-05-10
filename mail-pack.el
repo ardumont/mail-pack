@@ -383,5 +383,7 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
 For example, on debian-based system, `sudo aptitude install -y offlineimap mu`...
 When mu is installed, you also need to reference the mu4e (installed with mu) installation folder for this pack to work.")))
 
+(global-set-key (kbd "C-c e l") 'mail-pack/load-pack!)
+
 (provide 'mail-pack)
 ;;; mail-pack.el ends here
