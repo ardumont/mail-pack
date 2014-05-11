@@ -294,11 +294,6 @@ If no account is found, revert to the composing message behavior."
   "Given the entry ACCOUNT-SETUP-VARS, set the main account vars up."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
-(setq creds-file *MAIL-PACK-CREDENTIALS-FILE*)
-(setq creds-file-content (creds/read-lines "~/.authinfo"))
-(mail-pack/--setup-account creds-file creds-file-content)
-(mail-pack/setup creds-file creds-file-content)
-
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup an account and return the key values structure.
 CREDS-FILE represents the credentials file.
