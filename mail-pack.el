@@ -230,7 +230,7 @@ If no account is found, revert to the composing message behavior."
         ;; skip duplicates by default
         mu4e-headers-skip-duplicates t
         ;; default page size
-        mu4e-headers-results-limit 250
+        mu4e-headers-results-limit 100
         ;; default sort ordering
         mu4e~headers-sort-direction 'descending
         ;; default field ordering
