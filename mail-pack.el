@@ -70,9 +70,9 @@
   "The credentials file where you store your email information.
 This can be plain text too.")
 
-(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600
+(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 3600
   "Number of seconds between fetch + indexing.
-Default to 600 seconds.")
+Default to 3600 seconds.")
 
 (defvar *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t
   "Let the user decide which account to use for composing a message.
