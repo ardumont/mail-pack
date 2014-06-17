@@ -55,9 +55,6 @@
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
-;; activate option to keep the passphrase (it's preferable to use gpg-agent)
-(setq epa-file-cache-passphrase-for-symmetric-encryption t)
-
 ;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
 (defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4e"
   "The mu4e installation folder.")
