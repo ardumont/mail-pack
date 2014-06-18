@@ -53,6 +53,13 @@
 (require 's)
 (require 'offlineimap)
 
+;; ===================== Add completion on emails
+
+(install-packs '(google-contacts))
+
+(require 'google-contacts)
+(require 'google-contacts-message)
+
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
 ;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
