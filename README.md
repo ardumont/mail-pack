@@ -144,11 +144,11 @@ Then execute the code <kbd>M-x eval-last-sexp</kbd>.
 Here is a sample (adapt this to your needs):
 
 ```lisp
-(setq *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs24/site-lisp/mu4e")
-(setq *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/Maildir"))
-(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo"))
-(setq *MAIL-PACK-PERIOD-FETCH-MAIL* 3600)
-(setq *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* nil)
+(setq *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs24/site-lisp/mu4e"
+      *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/Maildir")
+      *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo")
+      *MAIL-PACK-PERIOD-FETCH-MAIL* 3600
+      *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* nil)
 ```
 
 Then reload the <kbd>mail-pack/load-mail-pack!<kbd> routine.
@@ -162,11 +162,11 @@ Simply define one like this for example (adapt this to your needs):
 ```lisp
 (add-hook 'mail-pack/setup-hooks
           (lambda ()
-            (setq *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4e")
-            (setq *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails"))
-            (setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
-            (setq *MAIL-PACK-PERIOD-FETCH-MAIL* 600)
-            (setq *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t)))
+            (setq *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4e"
+                  *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
+                  *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg")
+                  *MAIL-PACK-PERIOD-FETCH-MAIL* 600
+                  *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t))
 ```
 
 Then reload the <kbd>mail-pack/load-mail-pack!<kbd> routine.
