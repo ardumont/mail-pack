@@ -168,7 +168,7 @@ Simply define one like this for example (adapt this to your needs):
             (setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg"))
             (setq *MAIL-PACK-PERIOD-FETCH-MAIL* 600)
             (setq *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t)))
-            ```
+```
 
 Then reload the <kbd>mail-pack/load-mail-pack!<kbd> routine.
 
