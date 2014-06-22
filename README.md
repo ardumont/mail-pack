@@ -166,7 +166,7 @@ Simply define one like this for example (adapt this to your needs):
                   *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
                   *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg")
                   *MAIL-PACK-PERIOD-FETCH-MAIL* 600
-                  *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t))
+                  *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t)))
 ```
 
 Then reload the <kbd>mail-pack/load-mail-pack!<kbd> routine.
