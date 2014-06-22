@@ -9,31 +9,30 @@ mail-pack will:
 - read the [Maildir](https://en.wikipedia.org/wiki/Maildir) format through [mu4e](http://www.djcbsoftware.nl/code/mu/mu4e/index.html#Top) use
 - use [smtpmail](https://www.gnu.org/software/emacs/manual/html_mono/smtpmail.html) lib to send emails
 
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
+<!-- markdown-toc start - Don't edit this section. Run M-x mardown-toc/generate-toc again -->
+**Table of Contents**
 
 - [Pre-requisite](#pre-requisite)
-	- [Software](#software)
-		- [Offlineimap](#offlineimap)
-		- [Mu](#mu)
+    - [Software](#software)
+        - [Offlineimap](#offlineimap)
+        - [Mu](#mu)
 - [Install](#install)
-	- [Bare emacs24](#bare-emacs24)
-	- [[prelude-packs](https://github.com/ardumont/prelude-packs)](#prelude-packshttpsgithubcomardumontprelude-packs)
-	- [[emacs-live-packs](https://github.com/ardumont/emacs-live-packs)](#emacs-live-packshttpsgithubcomardumontemacs-live-packs)
+    - [Bare emacs24](#bare-emacs24)
+    - [[prelude-packs](https://github.com/ardumont/prelude-packs)](#[prelude-packs](https://github.com/ardumont/prelude-packs))
+    - [[emacs-live-packs](https://github.com/ardumont/emacs-live-packs)](#[emacs-live-packs](https://github.com/ardumont/emacs-live-packs))
 - [Conventions](#conventions)
-	- [Load/reload](#loadreload)
-	- [Hooks](#hooks)
+    - [Hooks](#hooks)
+    - [Load/reload](#load/reload)
 - [Setup](#setup)
-	- [One account](#one-account)
-	- [Multiple accounts](#multiple-accounts)
-	- [Set the main account](#set-the-main-account)
+    - [One account](#one-account)
+    - [Multiple accounts](#multiple-accounts)
+    - [Set the main account](#set-the-main-account)
 - [Run](#run)
-	- [mu4e-main](#mu4e-main)
-	- [mu4e-headers](#mu4e-headers)
-	- [mu4e-compose](#mu4e-compose)
+    - [mu4e-main](#mu4e-main)
+    - [mu4e-headers](#mu4e-headers)
+    - [mu4e-compose](#mu4e-compose)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-- markdown-toc end -->
 
 # Pre-requisite
 
