@@ -63,7 +63,9 @@
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
 ;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
-(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* "/usr/share/emacs/site-lisp/mu4e"
+(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* (if (file-exists-p "/etc/NIXOS")
+                                            "/nix/store/yc7xkgra6hhd2abiq58g9k3vqb9dq23f-mu-0.9.9.5/share/emacs/site-lisp/mu4e"
+                                          "/usr/share/emacs/site-lisp/mu4e")
   "The mu4e installation folder.")
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
