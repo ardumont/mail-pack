@@ -251,12 +251,8 @@ If no account is found, revert to the composing message behavior."
         mu4e-view-show-images t
         ;; prefer plain text message
         mu4e-view-prefer-html nil
-        ;; to convert html to plain text - prerequisite: aptitude install -y html2text
-        mu4e-html2text-command "html2text -utf8 -width 120"
-        ;; to convert html to plain text - prerequisite: aptitude install -y html2mardown
-        ;; mu4e-html2text-command "html2markdown | grep -v '&nbsp_place_holder;'"
-        ;; to convert html to org - prerequisite: aptitude install -y pandoc
-        ;; mu4e-html2text-command "pandoc -f html -t org"
+        ;; to convert html to org - prerequisite: `'sudo aptitude install -y pandoc`' or `'nix-env -i pandoc`'
+        mu4e-html2text-command "pandoc -f html -t org"
         ;; see mu4e-header-info for the full list of keywords
         mu4e-headers-fields '((:human-date    . 16)
                               (:flags         . 6)
