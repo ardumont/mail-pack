@@ -123,7 +123,7 @@ If all is ok, return the creds-file's content, nil otherwise."
 (defun mail-pack/--nb-accounts (creds-file-content)
   "In CREDS-FILE-CONTENT, compute how many accounts exist?"
   (--reduce-from (let ((machine (creds/get-entry it "machine")))
-                     (if (and machine (string-match-p "email-description" machine))
+                   (if (and machine (string-match-p "email-description" machine))
                        (+ 1 acc)
                      acc))
                  0
