@@ -37,10 +37,10 @@
 
 
 (require 'install-packages-pack)
-(install-packs '(s
-                 dash
-                 creds
-                 offlineimap))
+(install-packages-pack/install-packs '(s
+                                       dash
+                                       creds
+                                       offlineimap))
 
 ;; Internal libs
 (require 'gnus)
@@ -55,7 +55,7 @@
 
 ;; ===================== Add completion on emails
 
-(install-packs '(google-contacts))
+(install-packages-pack/install-packs '(google-contacts))
 
 (require 'google-contacts)
 (require 'google-contacts-message)
