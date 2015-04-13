@@ -62,9 +62,19 @@
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
-;; Install mu in your system `sudo aptitude install -y mu` (for example in debian-based system) and update the path on your machine to mu4e
+(defun mail-pack--compute-nix-mu4e-home ()
+  "Compute mu4e home."
+  (let ((mu-home (let ((coding-system-for-read 'utf-8))
+                   (shell-command "echo $(dirname $(readlink $(which mu)))/..");; UGLY HACK - find the nix way to determine mu's home
+                   (-> (with-current-buffer "*Shell Command Output*"
+                         (buffer-string))
+                       s-trim))))
+    (format "%s%s" mu-home "/share/emacs/site-lisp/mu4e")))
+
+;; Install mu in your system (deb-based: `sudo aptitude install -y mu`,
+;; nix-based: `nix-env -i mu`) and update the path on your machine to mu4e
 (defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* (if (file-exists-p "/etc/NIXOS")
-                                            "/nix/store/yc7xkgra6hhd2abiq58g9k3vqb9dq23f-mu-0.9.9.5/share/emacs/site-lisp/mu4e"
+                                            (mail-pack--compute-nix-mu4e-home)
                                           "/usr/share/emacs/site-lisp/mu4e")
   "The mu4e installation folder.")
 
