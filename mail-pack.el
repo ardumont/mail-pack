@@ -86,7 +86,7 @@
   "The credentials file where you store your email information.
 This can be plain text too.")
 
-(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 3600
+(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 900
   "Number of seconds between fetch + indexing.
 Default to 3600 seconds.")
 
