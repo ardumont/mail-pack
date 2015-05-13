@@ -40,7 +40,8 @@
 (install-packages-pack/install-packs '(s
                                        dash
                                        creds
-                                       offlineimap))
+                                       offlineimap
+                                       async))
 
 ;; Internal libs
 (require 'gnus)
@@ -52,6 +53,7 @@
 (require 'dash)
 (require 's)
 (require 'offlineimap)
+(require 'smtpmail-async)
 
 ;; ===================== Add completion on emails
 
@@ -280,7 +282,7 @@ If no account is found, revert to the composing message behavior."
         mu4e-compose-complete-addresses t
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-        message-send-mail-function 'smtpmail-send-it
+        message-send-mail-function 'async-smtpmail-send-it
         smtpmail-stream-type 'starttls
         starttls-use-gnutls t
         smtpmail-debug-info t
