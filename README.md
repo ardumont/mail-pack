@@ -123,8 +123,8 @@ This can be changed through those variables:
 (defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg")
   "The credentials file where you store your email informations. This can be plain text too.")
 
-(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 600
-  "Number of seconds between fetch + indexing. Default to 600 seconds.")
+(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 300
+  "Number of seconds between fetch + indexing. Default to 300 seconds.")
 
 (defvar *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t
   "Let the user decide if (s)he wants to choose the account to use when composing.
