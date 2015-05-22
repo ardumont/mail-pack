@@ -247,6 +247,8 @@ If no account is found, revert to the composing message behavior."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
         ;; skip duplicates by default
         mu4e-headers-skip-duplicates t
+        ;; auto update headers if changes
+        mu4e-headers-auto-update t
         ;; default page size
         mu4e-headers-results-limit 100
         ;; default sort ordering
@@ -281,6 +283,8 @@ If no account is found, revert to the composing message behavior."
         mu4e-compose-complete-only-personal t
         ;; auto complete addresses
         mu4e-compose-complete-addresses t
+        ;; auto-include signature
+        mu4e-compose-signature-auto-include t
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
         message-send-mail-function 'async-smtpmail-send-it
