@@ -373,6 +373,14 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
     ;; In any case, return the account setup vars
     account-setup-vars))
 
+;; spell check
+(add-hook 'mu4e-compose-mode-hook
+          (defun mail-pack/my-do-compose-stuff ()
+            "Settings for message composition."
+            (require 'flyspell)
+            (set-fill-column 72)
+            (flyspell-mode)))
+
 (defun mail-pack/setup (creds-file creds-file-content)
   "Mail pack setup with the CREDS-FILE path and the CREDS-FILE-CONTENT."
   ;; common setup
