@@ -283,11 +283,14 @@ If no account is found, revert to the composing message behavior."
         mu4e-compose-complete-only-personal t
         ;; auto complete addresses
         mu4e-compose-complete-addresses t
-        ;; auto-include signature
-        mu4e-compose-signature-auto-include t
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
         message-send-mail-function 'async-smtpmail-send-it
+        ;; no message signature as we use signature-file instead
+        message-signature nil
+        mu4e-compose-signature nil
+        ;; auto-include signature
+        mu4e-compose-signature-auto-include nil
         smtpmail-stream-type 'starttls
         starttls-use-gnutls t
         smtpmail-debug-info t
