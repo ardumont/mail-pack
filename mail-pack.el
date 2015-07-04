@@ -397,11 +397,11 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   (-when-let (nb-accounts (mail-pack/--nb-accounts creds-file-content))
     (when (< 1 nb-accounts)
       (->> (number-sequence 2 nb-accounts)
-        (mapc (lambda (account-entry-number)
-                (->> account-entry-number
-                  (format "%s")
-                  (mail-pack/--setup-account creds-file creds-file-content)
-                  (add-to-list '*MAIL-PACK-ACCOUNTS*)))))))
+           (mapc (lambda (account-entry-number)
+                   (->> account-entry-number
+                        (format "%s")
+                        (mail-pack/--setup-account creds-file creds-file-content)
+                        (add-to-list '*MAIL-PACK-ACCOUNTS*)))))))
 
   ;; main account setup
   (add-to-list '*MAIL-PACK-ACCOUNTS* (mail-pack/--setup-account creds-file creds-file-content))
