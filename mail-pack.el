@@ -117,9 +117,8 @@ By default t (so interactive).")
   "Ensure that the needed installation pre-requisites are met.
 Returns nil if problem."
   (when (file-exists-p *MAIL-PACK-MU4E-INSTALL-FOLDER*)
-    (progn
-      (add-to-list 'load-path *MAIL-PACK-MU4E-INSTALL-FOLDER*)
-      (require 'mu4e))))
+    (add-to-list 'load-path *MAIL-PACK-MU4E-INSTALL-FOLDER*)
+    (require 'mu4e)))
 
 (defun mail-pack/setup-possible-p (creds-file)
   "Check if CREDS-FILE exists and contain at least one account.
