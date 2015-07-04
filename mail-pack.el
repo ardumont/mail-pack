@@ -406,6 +406,8 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   ;; main account setup
   (add-to-list '*MAIL-PACK-ACCOUNTS* (mail-pack/--setup-account creds-file creds-file-content))
 
+  (custom-set-variables '(mu4e-user-mail-address-list (mapcar (lambda (entry) (cadr (cadr entry))) *MAIL-PACK-ACCOUNTS*)))
+
   ;; install bindings and hooks
   (mail-pack/--setup-keybindings-and-hooks!))
 
