@@ -452,7 +452,28 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
 For example, on debian-based system, `sudo aptitude install -y offlineimap mu`...
 When mu is installed, you also need to reference the mu4e (installed with mu) installation folder for this pack to work.")))
 
-(global-set-key (kbd "C-c e l") 'mail-pack/load-pack!)
+(defvar mail-pack-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c e l") 'mail-pack/load-pack!)
+    (define-key map (kbd "C-c e m") 'mu4e)
+    (define-key map (kbd "C-c e s") 'mail-pack/set-main-account!)
+    map)
+  "Keymap for git-pack mode.")
+
+(define-minor-mode mail-pack-mode
+  "Minor mode to consolidate git-pack extensions.
+
+\\{mail-pack-mode-map}"
+  :lighter " MP"
+  :keymap mail-pack-mode-map)
+
+(define-globalized-minor-mode global-mail-pack-mode mail-pack-mode mail-pack-on)
+
+(defun mail-pack-on ()
+  "Turn on `mail-pack-mode'."
+  (mail-pack-mode +1))
+
+(global-mail-pack-mode)
 
 (provide 'mail-pack)
 ;;; mail-pack.el ends here
