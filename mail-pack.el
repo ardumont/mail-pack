@@ -278,9 +278,10 @@ If no account is found, revert to the composing message behavior."
                               (:subject))
         ;; see format-time-string for the format - here french readable
         mu4e-headers-date-format "%Y-%m-%d %H:%M"
-        ;; only consider email addresses that were seen in personal messages
+        ;; autocomplete address - only consider email addresses that were seen
+        ;; in personal messages (variable: mu4e-user-mail-address-list)
         mu4e-compose-complete-only-personal t
-        ;; auto complete addresses
+        ;; autocomplete address - addresses
         mu4e-compose-complete-addresses t
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
