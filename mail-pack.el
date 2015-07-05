@@ -75,24 +75,24 @@
 
 ;; Install mu in your system (deb-based: `sudo aptitude install -y mu`,
 ;; nix-based: `nix-env -i mu`) and update the path on your machine to mu4e
-(defvar *MAIL-PACK-MU4E-INSTALL-FOLDER* (if (file-exists-p "/etc/NIXOS")
+(defvar mail-pack-mu4e-install-folder (if (file-exists-p "/etc/NIXOS")
                                             (mail-pack--compute-nix-mu4e-home)
                                           "/usr/share/emacs/site-lisp/mu4e")
   "The mu4e installation folder.")
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
-(defvar *MAIL-PACK-MAIL-ROOT-FOLDER* (expand-file-name "~/.mails")
+(defvar mail-pack-mail-root-folder (expand-file-name "~/.mails")
   "The root folder where you store your maildirs folder.")
 
-(defvar *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name "~/.authinfo.gpg")
+(defvar mail-pack-credentials-file (expand-file-name "~/.authinfo.gpg")
   "The credentials file where you store your email information.
 This can be plain text too.")
 
-(defvar *MAIL-PACK-PERIOD-FETCH-MAIL* 300
+(defvar mail-pack-period-fetch-mail 300
   "Number of seconds between fetch + indexing.
 Default to 300 seconds.")
 
-(defvar *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT* t
+(defvar mail-pack-interactive-choose-account t
   "Let the user decide which account to use for composing a message.
 If set to nil (automatic), the main account will be automatically chosen.
 To change the main account, use `M-x mail-pack/set-main-account!`.
@@ -102,7 +102,7 @@ By default t (so interactive).")
 
 ;; ===================== Static setup (user must not touch this)
 
-(defvar *MAIL-PACK-ACCOUNTS* nil "User's email accounts.")
+(defvar mail-pack-accounts nil "User's email accounts.")
 
 (defvar mail-pack/setup-hooks nil "Use hooks for user to set their setup override.")
 (setq mail-pack/setup-hooks) ;; reset hooks
@@ -116,8 +116,8 @@ By default t (so interactive).")
 (defun mail-pack/pre-requisites-ok-p! ()
   "Ensure that the needed installation pre-requisites are met.
 Returns nil if problem."
-  (when (file-exists-p *MAIL-PACK-MU4E-INSTALL-FOLDER*)
-    (add-to-list 'load-path *MAIL-PACK-MU4E-INSTALL-FOLDER*)
+  (when (file-exists-p mail-pack-mu4e-install-folder)
+    (add-to-list 'load-path mail-pack-mu4e-install-folder)
     (require 'mu4e)))
 
 (defun mail-pack/setup-possible-p (creds-file)
@@ -178,7 +178,7 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
 
 (defun mail-pack/set-main-account! ()
   (interactive)
-  (let* ((accounts          *MAIL-PACK-ACCOUNTS*)
+  (let* ((accounts          mail-pack-accounts)
          (possible-accounts (mail-pack/--maildir-accounts accounts))
          (account           (mail-pack/choose-main-account! possible-accounts)))
     (-> account
@@ -199,7 +199,7 @@ If no account is found, revert to the composing message behavior."
          (account           (if retrieved-account
                                 retrieved-account
                               ;; otherwise we need to choose (interactively or automatically) which account to choose
-                              (if *MAIL-PACK-INTERACTIVE-CHOOSE-ACCOUNT*
+                              (if mail-pack-interactive-choose-account
                                   ;; or let the user choose which account he want to compose its mail
                                   (mail-pack/choose-main-account! possible-accounts)
                                 (mail-pack/--maildir-from-email user-mail-address)))))
@@ -233,7 +233,7 @@ If no account is found, revert to the composing message behavior."
 
   ;; Hook to determine which account to use before composing
   (add-hook 'mu4e-compose-pre-hook
-            (lambda () (mail-pack/set-account *MAIL-PACK-ACCOUNTS*))))
+            (lambda () (mail-pack/set-account mail-pack-accounts))))
 
 (defun mail-pack/--label (entry-number label)
   "Given an ENTRY-NUMBER, and a LABEL, compute the full label."
@@ -259,7 +259,7 @@ If no account is found, revert to the composing message behavior."
         ;; allow for updating mail using 'U' in the main view
         mu4e-get-mail-command "offlineimap"
         ;; update every 5 min
-        mu4e-update-interval *MAIL-PACK-PERIOD-FETCH-MAIL*
+        mu4e-update-interval mail-pack-period-fetch-mail
         ;; inline images directly in the body message
         mu4e-view-show-images t
         ;; prefer plain text message
@@ -339,7 +339,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
          (smtp-server-entry        (creds/get-with creds-file-content `(("machine" . ,smtp-server) ("login" . ,mail-address))))
          (smtp-port                (creds/get-entry smtp-server-entry "port"))
          (folder-mail-address      (mail-pack/--maildir-from-email mail-address))
-         (folder-root-mail-address (format "%s/%s" *MAIL-PACK-MAIL-ROOT-FOLDER* folder-mail-address))
+         (folder-root-mail-address (format "%s/%s" mail-pack-mail-root-folder folder-mail-address))
          ;; setup the account
          (account-setup-vars       `(,folder-mail-address
                                      ;; Global setup
@@ -391,7 +391,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   (mail-pack/--common-configuration!)
 
   ;; reinit the accounts list
-  (setq *MAIL-PACK-ACCOUNTS*)
+  (setq mail-pack-accounts)
 
   ;; secondary accounts setup
   (-when-let (nb-accounts (mail-pack/--nb-accounts creds-file-content))
@@ -401,12 +401,12 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                    (->> account-entry-number
                         (format "%s")
                         (mail-pack/--setup-account creds-file creds-file-content)
-                        (add-to-list '*MAIL-PACK-ACCOUNTS*)))))))
+                        (add-to-list 'mail-pack-accounts)))))))
 
   ;; main account setup
-  (add-to-list '*MAIL-PACK-ACCOUNTS* (mail-pack/--setup-account creds-file creds-file-content))
+  (add-to-list 'mail-pack-accounts (mail-pack/--setup-account creds-file creds-file-content))
 
-  (custom-set-variables '(mu4e-user-mail-address-list (mapcar (lambda (entry) (cadr (cadr entry))) *MAIL-PACK-ACCOUNTS*)))
+  (custom-set-variables '(mu4e-user-mail-address-list (mapcar (lambda (entry) (cadr (cadr entry))) mail-pack-accounts)))
 
   ;; install bindings and hooks
   (mail-pack/--setup-keybindings-and-hooks!))
@@ -424,20 +424,20 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
   (run-hooks 'mail-pack/setup-hooks)
   ;; at last the checks and load pack routine
   (if (mail-pack/pre-requisites-ok-p!)
-      (-if-let (creds-file-content (mail-pack/setup-possible-p *MAIL-PACK-CREDENTIALS-FILE*))
+      (-if-let (creds-file-content (mail-pack/setup-possible-p mail-pack-credentials-file))
           (progn
-            (mail-pack/log (concat *MAIL-PACK-CREDENTIALS-FILE* " found! Running Setup..."))
-            (mail-pack/setup *MAIL-PACK-CREDENTIALS-FILE* creds-file-content)
+            (mail-pack/log (concat mail-pack-credentials-file " found! Running Setup..."))
+            (mail-pack/setup mail-pack-credentials-file creds-file-content)
             (mail-pack/log "Setup done!"))
         (mail-pack/log
          (concat
-          "You need to setup your credentials file " *MAIL-PACK-CREDENTIALS-FILE* " for this to work. (The credentials file can be secured with gpg or not).\n"
+          "You need to setup your credentials file " mail-pack-credentials-file " for this to work. (The credentials file can be secured with gpg or not).\n"
           "\n"
-          "A single account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
+          "A single account configuration file '" mail-pack-credentials-file "' would look like this:\n"
           "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n"
           "machine smtp.gmail.com login <your-email> port 587 password <your-mail-password-or-dedicated-passwd>\n"
           "\n"
-          "A multiple account configuration file '" *MAIL-PACK-CREDENTIALS-FILE* "' would look like this:\n"
+          "A multiple account configuration file '" mail-pack-credentials-file "' would look like this:\n"
           "machine email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
           "machine smtp.gmail.com login <login> port 587 password <your-mail-password-or-dedicated-passwd>\n"
           "machine 2-email-description firstname <firstname> surname <surname> name <name> x-url <url> mail-host <mail-host> signature <signature> smtp-server <smtp-server>\n\n"
@@ -447,7 +447,7 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
           "\n"
           "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.\n"
           "Whatever you choose, reference the file you use in your emacs configuration:\n"
-          "(setq *MAIL-PACK-CREDENTIALS-FILE* (expand-file-name \"~/.authinfo\"))")))
+          "(setq mail-pack-credentials-file (expand-file-name \"~/.authinfo\"))")))
     (mail-pack/log "As a pre-requisite, you need to install the offlineimap and mu packages.
 For example, on debian-based system, `sudo aptitude install -y offlineimap mu`...
 When mu is installed, you also need to reference the mu4e (installed with mu) installation folder for this pack to work.")))
