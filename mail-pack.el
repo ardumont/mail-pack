@@ -457,6 +457,8 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
     (define-key map (kbd "C-c e l") 'mail-pack/load-pack!)
     (define-key map (kbd "C-c e m") 'mu4e)
     (define-key map (kbd "C-c e s") 'mail-pack/set-main-account!)
+    (define-key map (kbd "C-c e u") 'mu4e-update-index)
+    (define-key map (kbd "C-c e i") 'mu4e-interrupt-update-mail)
     map)
   "Keymap for git-pack mode.")
 
