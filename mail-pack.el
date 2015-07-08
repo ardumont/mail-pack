@@ -37,12 +37,9 @@
 ;;; Code:
 
 
-(require 'install-packages-pack)
-(install-packages-pack/install-packs '(s
-                                       dash
-                                       creds
-                                       offlineimap
-                                       async))
+(defgroup mail-pack nil " Mail-pack"
+  :tag "Mail-pack"
+  :version "0.0.1")
 
 ;; Internal libs
 (require 'gnus)
