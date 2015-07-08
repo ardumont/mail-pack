@@ -5,6 +5,7 @@
 ;; Author: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Maintainer: Antoine R. Dumont <eniotna.t AT gmail.com>
 ;; Version: 0.0.1
+;; Package-Requires: ((emacs "24") (dash "2.11.0") (dash-functional "2.11.0") (creds "0.0.6.1") (offlineimap "0.1") (async "1.3"))
 ;; Keywords: emails offlineimap mu4e configuration
 ;; URL: https://github.com/ardumont/mail-pack
 
