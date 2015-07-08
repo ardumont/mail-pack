@@ -73,30 +73,35 @@
 
 ;; Install mu in your system (deb-based: `sudo aptitude install -y mu`,
 ;; nix-based: `nix-env -i mu`) and update the path on your machine to mu4e
-(defvar mail-pack-mu4e-install-folder (if (file-exists-p "/etc/NIXOS")
-                                            (mail-pack--compute-nix-mu4e-home)
-                                          "/usr/share/emacs/site-lisp/mu4e")
-  "The mu4e installation folder.")
+(defcustom mail-pack-mu4e-install-folder (if (file-exists-p "/etc/NIXOS")
+                                             (mail-pack--compute-nix-mu4e-home)
+                                           "/usr/share/emacs/site-lisp/mu4e")
+  "The mu4e installation folder."
+  :group 'mail-pack)
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
-(defvar mail-pack-mail-root-folder (expand-file-name "~/.mails")
-  "The root folder where you store your maildirs folder.")
+(defcustom mail-pack-mail-root-folder (expand-file-name "~/.mails")
+  "The root folder where you store your maildirs folder."
+  :group 'mail-pack)
 
-(defvar mail-pack-credentials-file (expand-file-name "~/.authinfo.gpg")
+(defcustom mail-pack-credentials-file (expand-file-name "~/.authinfo.gpg")
   "The credentials file where you store your email information.
-This can be plain text too.")
+This can be plain text too."
+  :group 'mail-pack)
 
-(defvar mail-pack-period-fetch-mail 300
+(defcustom mail-pack-period-fetch-mail 300
   "Number of seconds between fetch + indexing.
-Default to 300 seconds.")
+Default to 300 seconds."
+  :group 'mail-pack)
 
-(defvar mail-pack-interactive-choose-account t
+(defcustom mail-pack-interactive-choose-account 'interactive
   "Let the user decide which account to use for composing a message.
 If set to nil (automatic), the main account will be automatically chosen.
 To change the main account, use `M-x mail-pack/set-main-account!`.
-Otherwise (interactive), the user will be asked to choose the account to use.
+Otherwise, interactive, the user will be asked to choose the account to use.
 If only 1 account, this is the chosen account.
-By default t (so interactive).")
+By default 'interactive."
+  :group 'mail-pack)
 
 ;; ===================== Static setup (user must not touch this)
 
