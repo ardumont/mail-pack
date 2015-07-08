@@ -53,13 +53,6 @@
 (require 'offlineimap)
 (require 'smtpmail-async)
 
-;; ===================== Add completion on emails
-
-(install-packages-pack/install-packs '(google-contacts))
-
-(require 'google-contacts)
-(require 'google-contacts-message)
-
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
 (defun mail-pack--compute-nix-mu4e-home ()
