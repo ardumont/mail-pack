@@ -37,7 +37,7 @@
 ;;; Code:
 
 
-(defgroup mail-pack nil " Mail-pack"
+(defgroup mail-pack nil " Mail-pack group"
   :tag "Mail-pack"
   :version "0.0.1")
 
