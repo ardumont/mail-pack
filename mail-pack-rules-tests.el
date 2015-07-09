@@ -180,7 +180,7 @@
 
 (ert-deftest test-mail-pack-rules-filter-msg ()
   (should (equal
-           '("/ads" "/ci/travis" "/sfeir" "/job/linkedin" "/job/viadeo" "/hosting/ovh" "/job/ads" "/job/monster" "/swh/devel" "/spam" "/archive" "/archive")
+           '("/ads" "/ci/travis" "/sfeir" "/job/linkedin" "/job/viadeo" "/hosting/ovh" "/job/ads" "/job/monster" "/swh/devel" "/spam" "/archive")
            (let ((mail-pack-rules-refiling-rules '((:from "@apple.com"       :dest "/ads" :subject "apple\\|apple developer")
                                                    (:from "@travis-ci.org"   :dest "/ci/travis")
                                                    (:from "@sfeir.com"       :dest "/sfeir")
@@ -190,8 +190,8 @@
                                                    (:from "@*monster.com"    :dest "/job/monster")
                                                    (:from "@octo.com"        :dest "/job/ads")
                                                    (:to "swh-devel@inria.fr" :dest "/swh/devel")
-                                                   (:from "badrule-because-no-dest")
-                                                   (:subject "\\[blabla\\]"  :dest "/spam")))
+                                                   (:subject "\\[blabla\\]"  :dest "/spam")
+                                                   (:from "badrule-because-no-dest")))
                  (msgs '((:subject "Eat some shiny apple"
                                    :from (("apple" . "apple@apple.com"))
                                    :to (("Antoine Dumont" . "me@me.fr")))
@@ -223,7 +223,9 @@
                                    :to (("me" . "me@me.fr")))
                          (:subject "no rule"
                                    :to (("me" . "me@me.fr"))))))
-             (mapcar (-partial #'mail-pack-rules-filter-msg mail-pack-rules-refiling-rules) msgs)))))
+             (-map (-partial #'mail-pack-rules-filter-msg-by-rules
+                             mail-pack-rules-refiling-rules)
+                   msgs)))))
 
 (provide 'mail-pack-rules-tests)
 ;;; mail-pack-rules-tests.el ends here

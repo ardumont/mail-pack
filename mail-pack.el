@@ -53,6 +53,8 @@
 (require 'offlineimap)
 (require 'smtpmail-async)
 
+(require 'mail-pack-rules)
+
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
 (defun mail-pack--compute-nix-mu4e-home ()
@@ -312,35 +314,13 @@ If no account is found, revert to the composing message behavior."
   "Given the entry ACCOUNT-SETUP-VARS, set the main account vars up."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
-;; FIXME Agnostify this
-(defun mail-pack/--refiling-folder (default-archive-folder)
+(defun mail-pack/refile-msg (default-archive-folder)
   "Compute the refiling folder with default DEFAULT-ARCHIVE-FOLDER.
 ARCHIVE-FOLDER is the catch-all folder."
+
   (lexical-let ((archive-folder default-archive-folder))
     (lambda (msg)
-      (let ((subject (or (mu4e-message-field msg :subject) "")))
-        (cond ((and (mu4e-message-contact-field-matches msg :from "@apple.com")
-                    (string-match "apple\\|apple developer" subject))
-               "/ads")
-              ((mu4e-message-contact-field-matches msg :to "swh-devel@inria.fr")
-               "/ml/swh-devel")
-              ((mu4e-message-contact-field-matches msg :from "@travis-ci.org")
-               "/ci/travis")
-              ((mu4e-message-contact-field-matches msg :from "@sfeir.com")
-               "/sfeir")
-              ((mu4e-message-contact-field-matches msg :from "@linkedin.com")
-               "/job/linkedin")
-              ((mu4e-message-contact-field-matches msg :from "@viadeo.com")
-               "/job/viadeo")
-              ((mu4e-message-contact-field-matches msg :from "@ovh.com")
-               "/job/ovh")
-              ((mu4e-message-contact-field-matches msg :from "@monster.com")
-               "/job/monster")
-              ((mu4e-message-contact-field-matches msg :from "@octo.com")
-               "/job/octo")
-              ;; everything else goes to /archive
-              ;; important to have a catch-all at the end!
-              (t archive-folder))))))
+      (mail-pack-rules-filter-msg msg default-archive-folder))))
 
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup an account and return the key values structure.
@@ -388,7 +368,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                                      (mu4e-drafts-folder ,draft-folder)
                                      (mu4e-sent-folder   ,sent-folder)
                                      (mu4e-trash-folder  ,trash-folder)
-                                     (mu4e-refile-folder ,(mail-pack/--refiling-folder archive-folder))
+                                     (mu4e-refile-folder ,(mail-pack/refile-msg archive-folder))
                                      (mu4e-attachment-dir ,attachment-folder)
                                      ;; setup some handy shortcuts
                                      (mu4e-maildir-shortcuts (("/INBOX"        . ?i)

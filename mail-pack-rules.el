@@ -125,7 +125,7 @@ If RULE is not defined or no rule is found, the DEFAULT-FOLDER is used."
 DEFAULT-FOLDER used as a default rule function."
   (-map (-rpartial #'mail-pack-rules-filter-expand-rule default-folder) rules))
 
-(defun mail-pack-rules-filter-msg (rules msg &optional default-folder)
+(defun mail-pack-rules-filter-msg-by-rules (rules msg &optional default-folder)
   "Given a list of RULES, filter the MSG.
 Optionally, DEFAULT-FOLDER can be set."
   (let ((archive-default-folder (if default-folder default-folder "/archive")))
@@ -135,6 +135,11 @@ Optionally, DEFAULT-FOLDER can be set."
              (-drop-while #'null)
              car)
       archive-default-folder)))
+
+(defun mail-pack-rules-filter-msg (msg &optional default-folder)
+  "Filter MSG according to `'mail-pack-rules-refiling-rules`'.
+DEFAULT-FOLDER is the fallback folder."
+  (mail-pack-rules-filter-msg mail-pack-rules-refiling-rules default-folder ))
 
 (custom-set-variables '(mail-pack-rules-refiling-rules
                         '((:from "@travis-ci.org"   :dest "/ci/travis")
