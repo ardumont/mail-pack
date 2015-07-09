@@ -31,6 +31,7 @@
 (defcustom mail-pack-rules-default-archive-folder "/archive"
   "Default archive folder if no rules.")
 
+;; FIXME call a function hook to transform list of rules into function rule
 (defcustom mail-pack-rules-refiling-rules nil
   "Define rules to easily refile emails.
 Possible example:
@@ -102,7 +103,9 @@ Possible example:
 (defun mail-pack-rules-filter-expand-rule (rule default-folder)
   "Expand rule to a refiling function.
 If RULE is not defined or no rule is found, the DEFAULT-FOLDER is used."
-  (cond ((and (plist-member rule :from)
+  (cond ((not (plist-member rule :dest)) ;; no dest folder, default
+         (mail-pack-rules-filter-expand-rule--default default-folder))
+        ((and (plist-member rule :from)
               (plist-member rule :subject))
          (mail-pack-rules-filter-expand-rule--from-subject rule))
         ((and (plist-member rule :to)
@@ -117,17 +120,19 @@ If RULE is not defined or no rule is found, the DEFAULT-FOLDER is used."
         (t
          (mail-pack-rules-filter-expand-rule--default default-folder))))
 
+(defun mail-pack-rules-fn (rules default-folder)
+  "Compute RULES to rule function.
+DEFAULT-FOLDER used as a default rule function."
+  (-map (-rpartial #'mail-pack-rules-filter-expand-rule default-folder) rules))
+
 (defun mail-pack-rules-filter-msg (rules msg &optional default-folder)
   "Given a list of RULES, filter the MSG.
 Optionally, DEFAULT-FOLDER can be set."
   (let ((archive-default-folder (if default-folder default-folder "/archive")))
     (if mail-pack-rules-refiling-rules
-        (->> mail-pack-rules-refiling-rules
-             (mapcar (lambda (rule)
-                       (-> rule
-                           (mail-pack-rules-filter-expand-rule archive-default-folder)
-                           (apply (list msg)))))
-             (-filter (-compose #'not #'null))
+        (->> (mail-pack-rules-fn mail-pack-rules-refiling-rules archive-default-folder)
+             (-map (lambda (rule-fn) (apply rule-fn (list msg))))
+             (-drop-while #'null)
              car)
       archive-default-folder)))
 

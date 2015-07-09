@@ -140,33 +140,39 @@
                 (apply (mail-pack-rules-filter-expand-rule--to-subject nil) (list test-msg)))))
 
 (ert-deftest test-mail-pack-rules-filter-expand-rule ()
-  (should (string= "/in/the-jungle"
+  (should (string= "/default" ;; no :dest so bad rule so default folder
+                   (let ((test-msg '(:subject "[BLA] some hype subject"
+                                              :from (("Foobar" . "foobar@some-news.com"))
+                                              :to (("Antoine Dumont" . "some@mail.com")))))
+                     (apply (mail-pack-rules-filter-expand-rule '(:from "foobar@some-news.com") "/default") (list test-msg)))))
+
+  (should (string= "/in/the-jungle" ;; `'from`' ok
                    (let ((test-msg '(:subject "[BLA] some hype subject"
                                               :from (("Foobar" . "foobar@some-news.com"))
                                               :to (("Antoine Dumont" . "some@mail.com")))))
                      (apply (mail-pack-rules-filter-expand-rule '(:from "foobar@some-news.com" :dest "/in/the-jungle") "/default") (list test-msg)))))
 
-  (should (string= "/over/the-rainbow"
+  (should (string= "/over/the-rainbow" ;; `'to`' ok
                    (let ((test-msg '(:subject "[BLA] some hype subject"
                                               :from (("Foobar" . "foobar@some-news.com"))
                                               :to (("Antoine Dumont" . "some@mail.com")))))
                      (apply (mail-pack-rules-filter-expand-rule '(:to "some@mail.com" :dest "/over/the-rainbow") "/default") (list test-msg)))))
 
-  (should (string= "/in/the-sky"
+  (should (string= "/in/the-sky" ;; `'subject-to`' ok
                    (let ((test-msg '(:subject "[LAB] exciting news!"
                                               :from (("Foobar" . "foobar@some-news.com"))
                                               :to (("Antoine Dumont" . "some@mail.com")))))
                      (apply (mail-pack-rules-filter-expand-rule '(:subject "exciting news" :to "some@mail.com" :dest "/in/the-sky") "/default")
                             (list test-msg)))))
 
-  (should (string= "/under/the-sea"
+  (should (string= "/under/the-sea" ;; `'subject-from`' ok
                    (let ((test-msg '(:subject "[LAB] exciting news!"
                                               :from (("Foobar" . "foobar@some-news.com"))
                                               :to (("Antoine Dumont" . "some@mail.com")))))
                      (apply (mail-pack-rules-filter-expand-rule '(:subject "exciting news" :from "@some-news.com" :dest "/under/the-sea") "/default")
                             (list test-msg)))))
 
-  (should (string= "/default"
+  (should (string= "/default" ;; no rule so default
                    (let ((test-msg '(:subject "[LAB] match not!"
                                               :from (("Foobar" . "foobar@some-news.com"))
                                               :to (("Antoine Dumont" . "some@mail.com")))))
@@ -174,7 +180,7 @@
 
 (ert-deftest test-mail-pack-rules-filter-msg ()
   (should (equal
-           '("/ads" "/ci/travis" "/sfeir" "/job/linkedin" "/job/viadeo" "/hosting/ovh" "/job/ads" "/job/monster" "/swh/devel" "/spam" "/archive")
+           '("/ads" "/ci/travis" "/sfeir" "/job/linkedin" "/job/viadeo" "/hosting/ovh" "/job/ads" "/job/monster" "/swh/devel" "/spam" "/archive" "/archive")
            (let ((mail-pack-rules-refiling-rules '((:from "@apple.com"       :dest "/ads" :subject "apple\\|apple developer")
                                                    (:from "@travis-ci.org"   :dest "/ci/travis")
                                                    (:from "@sfeir.com"       :dest "/sfeir")
@@ -184,7 +190,8 @@
                                                    (:from "@*monster.com"    :dest "/job/monster")
                                                    (:from "@octo.com"        :dest "/job/ads")
                                                    (:to "swh-devel@inria.fr" :dest "/swh/devel")
-                                                   (:subject "\\[blabla\\]" :dest "/spam")))
+                                                   (:from "badrule-because-no-dest")
+                                                   (:subject "\\[blabla\\]"  :dest "/spam")))
                  (msgs '((:subject "Eat some shiny apple"
                                    :from (("apple" . "apple@apple.com"))
                                    :to (("Antoine Dumont" . "me@me.fr")))
