@@ -50,23 +50,23 @@ Possible example:
 
 (defun mail-pack-rules-filter-expand-rule--from (rule)
   "Expand from RULE."
-  (lexical-let* ((from-rule (plist-get rule :from))
-                 (dest-rule (plist-get rule :dest)))
+  (let ((from-rule (plist-get rule :from))
+        (dest-rule (plist-get rule :dest)))
     (lambda (msg)
       (when (mu4e-message-contact-field-matches msg :from from-rule)
         dest-rule))))
 
 (defun mail-pack-rules-filter-expand-rule--to (rule)
   "Expand to RULE."
-  (lexical-let ((to-rule (plist-get rule :to))
-                (dest-rule (plist-get rule :dest)))
+  (let ((to-rule (plist-get rule :to))
+        (dest-rule (plist-get rule :dest)))
     (lambda (msg) (when (mu4e-message-contact-field-matches msg :to to-rule)
                dest-rule))))
 
 (defun mail-pack-rules-filter-expand-rule--subject (rule)
   "Expand to subject RULE."
-  (lexical-let ((subject-rule (plist-get rule :subject))
-                (dest-rule (plist-get rule :dest)))
+  (let ((subject-rule (plist-get rule :subject))
+        (dest-rule (plist-get rule :dest)))
     (lambda (msg) (let ((subject (or (mu4e-message-field msg :subject) "")))
                (when (and subject-rule
                           (string-match subject-rule subject))
@@ -74,9 +74,9 @@ Possible example:
 
 (defun mail-pack-rules-filter-expand-rule--from-subject (rule)
   "Expand to `'from`' and `'subject`' RULE."
-  (lexical-let ((from-rule    (plist-get rule :from))
-                (subject-rule (plist-get rule :subject))
-                (dest-rule    (plist-get rule :dest)))
+  (let ((from-rule    (plist-get rule :from))
+        (subject-rule (plist-get rule :subject))
+        (dest-rule    (plist-get rule :dest)))
     (lambda (msg) (let ((subject (or (mu4e-message-field msg :subject) "")))
                (when (and subject-rule
                           (mu4e-message-contact-field-matches msg :from from-rule)
@@ -85,9 +85,9 @@ Possible example:
 
 (defun mail-pack-rules-filter-expand-rule--to-subject (rule)
   "Expand to `'to`' and `'subject`' RULE."
-  (lexical-let ((from-rule    (plist-get rule :to))
-                (subject-rule (plist-get rule :subject))
-                (dest-rule    (plist-get rule :dest)))
+  (let ((from-rule    (plist-get rule :to))
+        (subject-rule (plist-get rule :subject))
+        (dest-rule    (plist-get rule :dest)))
     (lambda (msg) (let ((subject (or (mu4e-message-field msg :subject) "")))
                (when (and subject-rule
                           (mu4e-message-contact-field-matches msg :to from-rule)
@@ -96,7 +96,7 @@ Possible example:
 
 (defun mail-pack-rules-filter-expand-rule--default (default-folder)
   "Expand DEFAULT-FOLDER rule."
-  (lexical-let ((default default-folder))
+  (let ((default default-folder))
     (lambda (_) default)))
 
 (defun mail-pack-rules-filter-expand-rule (rule default-folder)
