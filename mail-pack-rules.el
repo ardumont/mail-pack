@@ -128,18 +128,21 @@ DEFAULT-FOLDER used as a default rule function."
 (defun mail-pack-rules-filter-msg-by-rules (rules msg &optional default-folder)
   "Given a list of RULES, filter the MSG.
 Optionally, DEFAULT-FOLDER can be set."
-  (let ((archive-default-folder (if default-folder default-folder "/archive")))
-    (if mail-pack-rules-refiling-rules
-        (->> (mail-pack-rules-fn mail-pack-rules-refiling-rules archive-default-folder)
-             (-map (lambda (rule-fn) (apply rule-fn (list msg))))
-             (-drop-while #'null)
-             car)
+  (let ((archive-default-folder (if default-folder default-folder mail-pack-rules-default-archive-folder)))
+    (if rules
+        (-if-let (folder (->> (mail-pack-rules-fn rules archive-default-folder)
+                              (-map (lambda (rule-fn) (apply rule-fn (list msg))))
+                              (-drop-while #'null)
+                              car))
+            folder
+          archive-default-folder)
       archive-default-folder)))
 
 (defun mail-pack-rules-filter-msg (msg &optional default-folder)
   "Filter MSG according to `'mail-pack-rules-refiling-rules`'.
 DEFAULT-FOLDER is the fallback folder."
-  (mail-pack-rules-filter-msg mail-pack-rules-refiling-rules default-folder ))
+  (message "rules: %s\nmsg: %s\ndefault: %s" mail-pack-rules-refiling-rules msg default-folder)
+  (mail-pack-rules-filter-msg-by-rules mail-pack-rules-refiling-rules msg default-folder))
 
 (custom-set-variables '(mail-pack-rules-refiling-rules
                         '((:from "@travis-ci.org"   :dest "/ci/travis")

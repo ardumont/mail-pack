@@ -314,13 +314,12 @@ If no account is found, revert to the composing message behavior."
   "Given the entry ACCOUNT-SETUP-VARS, set the main account vars up."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
-(defun mail-pack/refile-msg (default-archive-folder)
-  "Compute the refiling folder with default DEFAULT-ARCHIVE-FOLDER.
+(defun mail-pack/refile-msg (default-folder)
+  "Compute the refiling folder with default DEFAULT-FOLDER.
 ARCHIVE-FOLDER is the catch-all folder."
-
-  (lexical-let ((archive-folder default-archive-folder))
+  (lexical-let ((archive-folder default-folder))
     (lambda (msg)
-      (mail-pack-rules-filter-msg msg default-archive-folder))))
+      (mail-pack-rules-filter-msg msg archive-folder))))
 
 (defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup an account and return the key values structure.
@@ -346,6 +345,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
          (smtp-port                (creds/get-entry smtp-server-entry "port"))
          (folder-mail-address      (mail-pack/--maildir-from-email mail-address))
          (folder-root-mail-address (format "%s/%s" mail-pack-mail-root-folder folder-mail-address))
+         (refile-archive-fn        (mail-pack/refile-msg archive-folder))
          ;; setup the account
          (account-setup-vars       `(,folder-mail-address
                                      ;; Global setup
@@ -368,7 +368,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                                      (mu4e-drafts-folder ,draft-folder)
                                      (mu4e-sent-folder   ,sent-folder)
                                      (mu4e-trash-folder  ,trash-folder)
-                                     (mu4e-refile-folder ,(mail-pack/refile-msg archive-folder))
+                                     (mu4e-refile-folder ,refile-archive-fn)
                                      (mu4e-attachment-dir ,attachment-folder)
                                      ;; setup some handy shortcuts
                                      (mu4e-maildir-shortcuts (("/INBOX"        . ?i)
