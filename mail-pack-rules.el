@@ -183,6 +183,8 @@ DEFAULT-FOLDER is the fallback folder."
                           (:from "@*journaldumanagement.com"        :dest "/newsletters/jdn")
                           (:to "xmonad@haskell.org"                 :dest "/newsletters/xmonad")
                           (:from "@*github.com"                     :dest "/dev/github")
+                          (:from "@*free-mobile.com"                :dest "/newsletters/free")
+                          (:from "clojure-fr@googlegroups.com"      :dest "/newsletters/clojure-fr")
                           (:to "emacs-orgmode@gnu.org"              :dest "/newsletters/org")
                           (:to "emacs-live@googlegroups.com"        :dest "/newsletters/emacs-live")
                           (:to "help-gnu-emacs@gnu.org"             :dest "/newsletters/help-emacs")
