@@ -2,8 +2,6 @@
 (require 'ert-expectations)
 (require 'el-mock)
 
-(load-file "init.el")
-
 (require 'mail-pack)
 
 (expectations
@@ -79,21 +77,21 @@
          (mail-pack/--find-account '("some-other-account@something" "some-account@some-server.com" "some-account@elsewhere.com") "unknown")))
 
 (expectations
-  (expect "some-account"
-    (mail-pack/--retrieve-account '(:docid "176039"
-                                           :subject "some subject"
-                                           :date (21347 3862 0)
-                                           :size "some-size"
-                                           :message-id "some-message-id"
-                                           :path "some-path"
-                                           :maildir /INBOX
-                                           :priority normal
-                                           :flags (seen)
-                                           :parts ((:index 1 :name 1.part :mime-type text/plain :type (leaf) :attachment nil :size 5454)
-                                                   (:index 2 :name 2.part :mime-type text/html :type (leaf) :attachment nil :size 89456))
-                                           :from ((Clojure Users . groups-noreply@linkedin.com))
-                                           :to (("username" . "some-account@somewhere.com"))
-                                           :cc (("some other username" . "some-other-account@elsewhere.com"))
-                                           :bcc (("yet another username" . "yet-another-account@elsewhere.com"))
-                                           :body-txt "some-body-text-plain-separated-then-other-html-content")
-                                  '("some-account" "some-not-found-account"))))
+ (expect "some-account"
+         (mail-pack/--retrieve-account '(:docid "176039"
+                                                :subject "some subject"
+                                                :date (21347 3862 0)
+                                                :size "some-size"
+                                                :message-id "some-message-id"
+                                                :path "some-path"
+                                                :maildir /INBOX
+                                                :priority normal
+                                                :flags (seen)
+                                                :parts ((:index 1 :name 1.part :mime-type text/plain :type (leaf) :attachment nil :size 5454)
+                                                        (:index 2 :name 2.part :mime-type text/html :type (leaf) :attachment nil :size 89456))
+                                                :from ((Clojure Users . groups-noreply@linkedin.com))
+                                                :to (("username" . "some-account@somewhere.com"))
+                                                :cc (("some other username" . "some-other-account@elsewhere.com"))
+                                                :bcc (("yet another username" . "yet-another-account@elsewhere.com"))
+                                                :body-txt "some-body-text-plain-separated-then-other-html-content")
+                                       '("some-account" "some-not-found-account"))))
