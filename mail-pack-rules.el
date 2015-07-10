@@ -1,4 +1,4 @@
-;;; mail-pack-rules.el ---                                    -*- lexical-binding: t; -*-
+;;; mail-pack-rules.el --- Ease refiling rules for mail-pack -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015  ardumont
 
