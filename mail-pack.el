@@ -168,10 +168,10 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
   (mapcar #'car accounts))
 
 (defun mail-pack/choose-main-account! (possible-accounts)
-  "Permit the user to choose an account from the optional ACCOUNT-LIST as main account. Return the chosen account."
+  "Permit user to choose an account from the optional ACCOUNT-LIST as main one.
+Return the chosen account."
   (if (< 1 (length possible-accounts))
-      (completing-read (format "Compose with account: (%s) " (s-join "/" possible-accounts))
-                       possible-accounts nil t nil nil (car possible-accounts))
+      (completing-read "Compose with account: " possible-accounts nil t nil nil (car possible-accounts))
     (car possible-accounts)))
 
 (defun mail-pack/set-main-account! ()
