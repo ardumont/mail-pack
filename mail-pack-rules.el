@@ -219,6 +219,7 @@ DEFAULT-FOLDER is the fallback folder."
                           (:from "@*github.com"                     :dest "/dev/github")
                           (:from "@*free-mobile.com"                :dest "/newsletters/free")
                           (:from "clojure-fr@googlegroups.com"      :dest "/newsletters/clojure-fr")
+                          (:from "@*ugc.fr"                         :dest "/newsletters/ugc")
                           (:to "swh-devel@inria.fr"                 :dest "/swh/devel")
                           (:to "password-store@lists.zx2c4.com"     :dest "/newsletters/password-store")
                           (:to "nix-dev@lists.science.uu.nl"        :dest "/newsletters/nix-dev")
