@@ -204,8 +204,8 @@ If no account is found, revert to the composing message behavior."
                                 (mail-pack/--maildir-from-email user-mail-address)))))
     (if account
         (-> account
-          (assoc accounts)
-          mail-pack/--setup-as-main-account!)
+            (assoc accounts)
+            mail-pack/--setup-as-main-account!)
       (error "No email account found!"))))
 
 (defun mail-pack/--setup-keybindings-and-hooks! ()
