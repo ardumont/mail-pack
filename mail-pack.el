@@ -248,6 +248,8 @@ If no account is found, revert to the composing message behavior."
 (defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
+        ;; maildir prefix root
+        mu4e-maildir mail-pack-mail-root-folder
         ;; skip duplicates by default
         mu4e-headers-skip-duplicates t
         ;; auto update headers if changes
@@ -370,18 +372,17 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                                      (smtpmail-smtp-server          ,smtp-server)
                                      (smtpmail-auth-credentials     ,creds-file)
                                      ;; mu4e setup
-                                     (mu4e-maildir ,(expand-file-name folder-root-mail-address))
-                                     (mu4e-drafts-folder ,draft-folder)
-                                     (mu4e-sent-folder   ,sent-folder)
-                                     (mu4e-trash-folder  ,trash-folder)
-                                     (mu4e-refile-folder ,refile-archive-fn)
+                                     (mu4e-drafts-folder  ,(concat "/" folder-mail-address draft-folder))
+                                     (mu4e-sent-folder    ,(concat "/" folder-mail-address sent-folder))
+                                     (mu4e-trash-folder   ,(concat "/" folder-mail-address trash-folder))
                                      (mu4e-attachment-dir ,attachment-folder)
+                                     (mu4e-refile-folder  ,refile-archive-fn)
                                      ;; setup some handy shortcuts
-                                     (mu4e-maildir-shortcuts (("/INBOX"        . ?i)
-                                                              (,sent-folder    . ?s)
-                                                              (,trash-folder   . ?t)
-                                                              (,draft-folder   . ?d)
-                                                              (,archive-folder . ?a))))))
+                                     (mu4e-maildir-shortcuts ((,(concat "/" folder-mail-address "/INBOX")       . ?i)
+                                                              (,(concat "/" folder-mail-address sent-folder)    . ?s)
+                                                              (,(concat "/" folder-mail-address trash-folder)   . ?t)
+                                                              (,(concat "/" folder-mail-address draft-folder)   . ?d)
+                                                              (,(concat "/" folder-mail-address archive-folder) . ?a))))))
     ;; Sets the main account if it is the one!
     (unless entry-number
       (mail-pack/--setup-as-main-account! account-setup-vars))
