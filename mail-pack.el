@@ -89,7 +89,7 @@ This can be plain text too."
 Default to 300 seconds."
   :group 'mail-pack)
 
-(defcustom mail-pack-interactive-choose-account 'interactive
+(defcustom mail-pack-interactive-choose-account nil
   "Let the user decide which account to use for composing a message.
 If set to nil (automatic), the main account will be automatically chosen.
 To change the main account, use `M-x mail-pack/set-main-account!`.
