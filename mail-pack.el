@@ -185,11 +185,13 @@ Return the chosen account."
         mail-pack/--setup-as-main-account!)))
 
 (defun mail-pack/current-account ()
+  "Compute the current account."
+  (mail-pack/--maildir-from-email user-mail-address))
+
+(defun mail-pack/display-current-account ()
   "Display the current enabled account."
   (interactive)
-  (->> user-mail-address
-       mail-pack/--maildir-from-email
-       (mail-pack/log "Current: %s")))
+  (mail-pack/log "Current: %s" (mail-pack/current-account)))
 
 (defun mail-pack/set-account (accounts)
   "Set the main account amongst ACCOUNTS.
@@ -478,7 +480,7 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
     (define-key map (kbd "C-c e l") 'mail-pack/load-pack!)
     (define-key map (kbd "C-c e m") 'mu4e)
     (define-key map (kbd "C-c e s") 'mail-pack/set-main-account!)
-    (define-key map (kbd "C-c e d") 'mail-pack/current-account)
+    (define-key map (kbd "C-c e d") 'mail-pack/display-current-account)
     (define-key map (kbd "C-c e u") 'mu4e-update-index)
     (define-key map (kbd "C-c e i") 'mu4e-interrupt-update-mail)
     map)
