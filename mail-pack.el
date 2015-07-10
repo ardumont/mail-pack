@@ -209,23 +209,31 @@ If no account is found, revert to the composing message behavior."
 
 (defun mail-pack/--setup-keybindings-and-hooks! ()
   "Install defaults hooks and key bindings."
-  (add-hook 'mu4e-headers-mode-hook
-            (lambda ()
-              (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-view-message)))
-
   (add-hook 'mu4e-main-mode-hook
             (lambda ()
               (define-key 'mu4e-main-mode-map (kbd "u") 'mu4e-update-mail-and-index)
               (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
               (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
               (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
-              (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)
+              (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)))
 
+  (add-hook 'mu4e-headers-mode-hook
+            (lambda ()
+              (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-view-message)
               (define-key 'mu4e-headers-mode-map (kbd "a") 'mu4e-headers-mark-for-refile)
               (define-key 'mu4e-headers-mode-map (kbd "c") 'mu4e-compose-new)
               (define-key 'mu4e-headers-mode-map (kbd "e") 'mu4e-compose-edit)
               (define-key 'mu4e-headers-mode-map (kbd "f") 'mu4e-compose-forward)
               (define-key 'mu4e-headers-mode-map (kbd "r") 'mu4e-compose-reply)))
+
+  (add-hook 'mu4e-view-mode-hook
+            (lambda ()
+              (define-key 'mu4e-view-mode-map (kbd "A") 'mu4e-view-action)
+              (define-key 'mu4e-view-mode-map (kbd "a") 'mu4e-headers-mark-for-refile)
+              (define-key 'mu4e-view-mode-map (kbd "c") 'mu4e-compose-new)
+              (define-key 'mu4e-view-mode-map (kbd "e") 'mu4e-compose-edit)
+              (define-key 'mu4e-view-mode-map (kbd "f") 'mu4e-compose-forward)
+              (define-key 'mu4e-view-mode-map (kbd "r") 'mu4e-compose-reply)))
 
   (global-set-key (kbd "C-c e m") 'mu4e)
 
