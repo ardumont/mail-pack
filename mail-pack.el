@@ -235,8 +235,6 @@ If no account is found, revert to the composing message behavior."
               (define-key 'mu4e-view-mode-map (kbd "f") 'mu4e-compose-forward)
               (define-key 'mu4e-view-mode-map (kbd "r") 'mu4e-compose-reply)))
 
-  (global-set-key (kbd "C-c e m") 'mu4e)
-
   ;; Hook to determine which account to use before composing
   (add-hook 'mu4e-compose-pre-hook
             (lambda () (mail-pack/set-account mail-pack-accounts))))
