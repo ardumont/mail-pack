@@ -187,7 +187,9 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
 (defun mail-pack/current-account ()
   "Display the current enabled account."
   (interactive)
-  (mail-pack/log "Current enabled account: %s" user-mail-address))
+  (->> user-mail-address
+       mail-pack/--maildir-from-email
+       (mail-pack/log "Current: %s")))
 
 (defun mail-pack/set-account (accounts)
   "Set the main account amongst ACCOUNTS.
