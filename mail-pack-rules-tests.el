@@ -238,5 +238,10 @@
                                                     (:account-b (mu4e-maildir "/home/user/Maildir/b")))))
                           (mail-pack-rules--find-maildir '(:path "/home/user/Maildir/b/INBOX/cur/abc_0.15992.corellia,U=31822,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,RS"))))))
 
+(ert-deftest test-mail-pack-rules--destination-folder-with-account ()
+  (should (equal
+           '(:full-path "/home/tony/.mails/eniotna.t/dev/null" :relative "/eniotna.t/dev/null")
+           (mail-pack-rules--destination-folder-with-account '(:path "/home/tony/.mails/eniotna.t/inbox") "/dev/null"))))
+
 (provide 'mail-pack-rules-tests)
 ;;; mail-pack-rules-tests.el ends here

@@ -55,7 +55,7 @@ Possible example:
 Implementation detail: Use msg's :path entry."
   (let ((path (mu4e-message-field msg :path)))
     (->> mail-pack-accounts
-         (-map (-compose #'car (-partial #'assoc-default 'mu4e-maildir))) ;; find all maildirs
+         (-map (-compose (-partial #'concat mu4e-maildir) (-partial #'concat "/") #'car)) ;; find all maildirs
          (--filter (f-ancestor-of? it path))
          car)))
 
@@ -66,7 +66,6 @@ create it -- we cannot be sure creation succeeded here, since this
 is done asynchronously.
 Otherwise, return nil.
 Note, DIR has to be an absolute path."
-  (message "mail-pack-rules: mu mkdir %s" dir)
   (when (and (file-exists-p dir) (not (file-directory-p dir)))
     (mu4e-error "%s exists, but is not a directory" dir))
   (if(file-directory-p dir)
@@ -74,18 +73,21 @@ Note, DIR has to be an absolute path."
     (mu4e~proc-mkdir dir)
     t))
 
-(defun trace (v label)
-  "Decorator to trace V with LABEL."
-  (message "%s: %s" label v))
+(defun mail-pack-rules--destination-folder-with-account (msg dest)
+  "Given a MSG, determines the full destination folder with the right account.
+DEST is the agnostic destination folder described in a rule."
+  (let ((full-maildir (mail-pack-rules--find-maildir msg)))
+    (list :full-path (concat full-maildir dest)
+          :relative (concat "/" (f-filename full-maildir) dest))))
 
-(defun mail-pack-rules--maybe-create-maildir-from-rule (msg destination-folder)
-  "Create a maildir according to a MSG and a DESTINATION-FOLDER.
-Return t is the command has been triggered, nil otherwise."
-  (trace "msg" msg)
-  (trace "dest" destination-folder)
-  (-> (mail-pack-rules--find-maildir msg)
-      (concat destination-folder)
-      mail-pack-rules--maybe-create-maildir))
+(defun mail-pack-rules--compute-destination (msg dest-rule)
+  "Compute the destination rule from the MSG.
+DEST-RULE is the suffix destination.
+This will create transparently the right destination folder if inexistant.
+And return the relative destination rule folder for the right account."
+  (let ((dest-data (mail-pack-rules--destination-folder-with-account msg dest-rule)))
+    (mail-pack-rules--maybe-create-maildir (plist-get dest-data :full-path))
+    (plist-get dest-data :relative)))
 
 (defun mail-pack-rules-filter-expand-rule--from (rule)
   "Expand from RULE."
@@ -93,16 +95,14 @@ Return t is the command has been triggered, nil otherwise."
         (dest-rule (plist-get rule :dest)))
     (lambda (msg)
       (when (mu4e-message-contact-field-matches msg :from from-rule)
-        (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
-        dest-rule))))
+        (mail-pack-rules--compute-destination msg dest-rule)))))
 
 (defun mail-pack-rules-filter-expand-rule--to (rule)
   "Expand to RULE."
   (let ((to-rule (plist-get rule :to))
         (dest-rule (plist-get rule :dest)))
     (lambda (msg) (when (mu4e-message-contact-field-matches msg :to to-rule)
-               (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
-               dest-rule))))
+               (mail-pack-rules--compute-destination msg dest-rule)))))
 
 (defun mail-pack-rules-filter-expand-rule--subject (rule)
   "Expand to subject RULE."
@@ -111,8 +111,7 @@ Return t is the command has been triggered, nil otherwise."
     (lambda (msg) (let ((subject (or (mu4e-message-field msg :subject) "")))
                (when (and subject-rule
                           (string-match subject-rule subject))
-                 (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
-                 dest-rule)))))
+                 (mail-pack-rules--compute-destination msg dest-rule))))))
 
 (defun mail-pack-rules-filter-expand-rule--from-subject (rule)
   "Expand to `'from`' and `'subject`' RULE."
@@ -123,8 +122,7 @@ Return t is the command has been triggered, nil otherwise."
                (when (and subject-rule
                           (mu4e-message-contact-field-matches msg :from from-rule)
                           (string-match subject-rule subject))
-                 (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
-                 dest-rule)))))
+                 (mail-pack-rules--compute-destination msg dest-rule))))))
 
 (defun mail-pack-rules-filter-expand-rule--to-subject (rule)
   "Expand to `'to`' and `'subject`' RULE."
@@ -135,8 +133,7 @@ Return t is the command has been triggered, nil otherwise."
                (when (and subject-rule
                           (mu4e-message-contact-field-matches msg :to from-rule)
                           (string-match-p subject-rule subject))
-                 (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
-                 dest-rule)))))
+                 (mail-pack-rules--compute-destination msg dest-rule))))))
 
 (defun mail-pack-rules-filter-expand-rule--default (default-folder)
   "Expand DEFAULT-FOLDER rule."
