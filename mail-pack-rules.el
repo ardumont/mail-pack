@@ -141,7 +141,6 @@ Optionally, DEFAULT-FOLDER can be set."
 (defun mail-pack-rules-filter-msg (msg &optional default-folder)
   "Filter MSG according to `'mail-pack-rules-refiling-rules`'.
 DEFAULT-FOLDER is the fallback folder."
-  (message "rules: %s\nmsg: %s\ndefault: %s" mail-pack-rules-refiling-rules msg default-folder)
   (mail-pack-rules-filter-msg-by-rules mail-pack-rules-refiling-rules msg default-folder))
 
 (custom-set-variables '(mail-pack-rules-refiling-rules
