@@ -175,6 +175,7 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
     (car possible-accounts)))
 
 (defun mail-pack/set-main-account! ()
+  "Switch the current account."
   (interactive)
   (let* ((accounts          mail-pack-accounts)
          (possible-accounts (mail-pack/--maildir-accounts accounts))
