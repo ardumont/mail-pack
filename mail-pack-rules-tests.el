@@ -227,5 +227,16 @@
                              mail-pack-rules-refiling-rules)
                    msgs)))))
 
+(ert-deftest test-mail-pack-rules--find-maildir ()
+  (should (string-equal "/home/user/Maildir/a"
+                        (let ((mail-pack-accounts '((:account-a (mu4e-maildir "/home/user/Maildir/a"))
+                                                    (:account-b (mu4e-maildir "/home/user/Maildir/b")))))
+                          (mail-pack-rules--find-maildir '(:path "/home/user/Maildir/a/INBOX/cur/1436484967_0.15992.corellia,U=31822,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,RS")))))
+  (should (string-equal "/home/user/Maildir/b"
+                        (let ((mail-pack-accounts '((:account-a (mu4e-maildir "/home/user/Maildir/a"))
+                                                    (:account-c (mu4e-maildir "/home/user/Maildir/c"))
+                                                    (:account-b (mu4e-maildir "/home/user/Maildir/b")))))
+                          (mail-pack-rules--find-maildir '(:path "/home/user/Maildir/b/INBOX/cur/abc_0.15992.corellia,U=31822,FMD5=7e33429f656f1e6e9d79b29c3f82c57e:2,RS"))))))
+
 (provide 'mail-pack-rules-tests)
 ;;; mail-pack-rules-tests.el ends here

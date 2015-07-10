@@ -27,6 +27,7 @@
 
 (require 'dash)
 (require 'dash-functional)
+(require 'f)
 
 (defcustom mail-pack-rules-default-archive-folder "/archive"
   "Default archive folder if no rules.")
@@ -49,12 +50,50 @@ Possible example:
   :require 'mail-pack-rules
   :group 'mail-pack)
 
+(defun mail-pack-rules--find-maildir (msg)
+  "Given a MSG, determine the maildir.
+Implementation detail: Use msg's :path entry."
+  (let ((path (mu4e-message-field msg :path)))
+    (->> mail-pack-accounts
+         (-map (-compose #'car (-partial #'assoc-default 'mu4e-maildir))) ;; find all maildirs
+         (--filter (f-ancestor-of? it path))
+         car)))
+
+(defun mail-pack-rules--maybe-create-maildir (dir)
+  "Create create maildir DIR if it does not exist yet.
+Return t if the dir already existed, or an attempt has been made to
+create it -- we cannot be sure creation succeeded here, since this
+is done asynchronously.
+Otherwise, return nil.
+Note, DIR has to be an absolute path."
+  (message "mail-pack-rules: mu mkdir %s" dir)
+  (when (and (file-exists-p dir) (not (file-directory-p dir)))
+    (mu4e-error "%s exists, but is not a directory" dir))
+  (if(file-directory-p dir)
+      t
+    (mu4e~proc-mkdir dir)
+    t))
+
+(defun trace (v label)
+  "Decorator to trace V with LABEL."
+  (message "%s: %s" label v))
+
+(defun mail-pack-rules--maybe-create-maildir-from-rule (msg destination-folder)
+  "Create a maildir according to a MSG and a DESTINATION-FOLDER.
+Return t is the command has been triggered, nil otherwise."
+  (trace "msg" msg)
+  (trace "dest" destination-folder)
+  (-> (mail-pack-rules--find-maildir msg)
+      (concat destination-folder)
+      mail-pack-rules--maybe-create-maildir))
+
 (defun mail-pack-rules-filter-expand-rule--from (rule)
   "Expand from RULE."
   (let ((from-rule (plist-get rule :from))
         (dest-rule (plist-get rule :dest)))
     (lambda (msg)
       (when (mu4e-message-contact-field-matches msg :from from-rule)
+        (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
         dest-rule))))
 
 (defun mail-pack-rules-filter-expand-rule--to (rule)
@@ -62,6 +101,7 @@ Possible example:
   (let ((to-rule (plist-get rule :to))
         (dest-rule (plist-get rule :dest)))
     (lambda (msg) (when (mu4e-message-contact-field-matches msg :to to-rule)
+               (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
                dest-rule))))
 
 (defun mail-pack-rules-filter-expand-rule--subject (rule)
@@ -71,6 +111,7 @@ Possible example:
     (lambda (msg) (let ((subject (or (mu4e-message-field msg :subject) "")))
                (when (and subject-rule
                           (string-match subject-rule subject))
+                 (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
                  dest-rule)))))
 
 (defun mail-pack-rules-filter-expand-rule--from-subject (rule)
@@ -82,6 +123,7 @@ Possible example:
                (when (and subject-rule
                           (mu4e-message-contact-field-matches msg :from from-rule)
                           (string-match subject-rule subject))
+                 (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
                  dest-rule)))))
 
 (defun mail-pack-rules-filter-expand-rule--to-subject (rule)
@@ -93,6 +135,7 @@ Possible example:
                (when (and subject-rule
                           (mu4e-message-contact-field-matches msg :to from-rule)
                           (string-match-p subject-rule subject))
+                 (mail-pack-rules--maybe-create-maildir-from-rule msg dest-rule)
                  dest-rule)))))
 
 (defun mail-pack-rules-filter-expand-rule--default (default-folder)
