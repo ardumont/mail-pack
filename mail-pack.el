@@ -107,9 +107,9 @@ By default 'interactive."
 
 ;; ===================== functions
 
-(defun mail-pack/log (str)
-  "Log STR with specific pack prefix."
-  (message "Mail Pack - %s" str))
+(defun mail-pack/log (&rest args)
+  "Log ARGS with specific pack prefix."
+  (apply #'message (format "Mail Pack - %s" (car args)) (cdr args)))
 
 (defun mail-pack/pre-requisites-ok-p! ()
   "Ensure that the needed installation pre-requisites are met.
@@ -181,8 +181,13 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
          (possible-accounts (mail-pack/--maildir-accounts accounts))
          (account           (mail-pack/choose-main-account! possible-accounts)))
     (-> account
-      (assoc accounts)
-      mail-pack/--setup-as-main-account!)))
+        (assoc accounts)
+        mail-pack/--setup-as-main-account!)))
+
+(defun mail-pack/current-account ()
+  "Display the current enabled account."
+  (interactive)
+  (mail-pack/log "Current enabled account: %s" user-mail-address))
 
 (defun mail-pack/set-account (accounts)
   "Set the main account amongst ACCOUNTS.
@@ -471,6 +476,7 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
     (define-key map (kbd "C-c e l") 'mail-pack/load-pack!)
     (define-key map (kbd "C-c e m") 'mu4e)
     (define-key map (kbd "C-c e s") 'mail-pack/set-main-account!)
+    (define-key map (kbd "C-c e d") 'mail-pack/current-account)
     (define-key map (kbd "C-c e u") 'mu4e-update-index)
     (define-key map (kbd "C-c e i") 'mu4e-interrupt-update-mail)
     map)
