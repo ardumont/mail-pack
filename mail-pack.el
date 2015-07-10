@@ -170,19 +170,25 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
 (defun mail-pack/choose-main-account! (possible-accounts)
   "Permit user to choose an account from the optional ACCOUNT-LIST as main one.
 Return the chosen account."
-  (if (< 1 (length possible-accounts))
-      (completing-read "Compose with account: " possible-accounts nil t nil nil (car possible-accounts))
+  (-if-let (filtered-possible-accounts (-filter (-compose #'not (-partial #'string-equal (mail-pack/current-account))) possible-accounts))
+      (if (= 1 (length filtered-possible-accounts))
+          (car filtered-possible-accounts)
+        (completing-read "Compose with account: " filtered-possible-accounts nil t nil nil (car filtered-possible-accounts)))
     (car possible-accounts)))
 
 (defun mail-pack/set-main-account! ()
-  "Switch the current account."
+  "Switch the current account.
+If only one, keep it.
+If 2, switch to the other one.
+Otherwise, let the user decide which account (s)he wants."
   (interactive)
   (let* ((accounts          mail-pack-accounts)
          (possible-accounts (mail-pack/--maildir-accounts accounts))
          (account           (mail-pack/choose-main-account! possible-accounts)))
     (-> account
         (assoc accounts)
-        mail-pack/--setup-as-main-account!)))
+        mail-pack/--setup-as-main-account!)
+    (mail-pack/log "Switch to account: %s" account)))
 
 (defun mail-pack/current-account ()
   "Compute the current account."
