@@ -489,6 +489,7 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
     (define-key map (kbd "C-c e d") 'mail-pack/display-current-account)
     (define-key map (kbd "C-c e u") 'mu4e-update-index)
     (define-key map (kbd "C-c e i") 'mu4e-interrupt-update-mail)
+    (define-key map (kbd "C-c e c") 'mu4e-compose-new)
     map)
   "Keymap for mail-pack mode.")
 
