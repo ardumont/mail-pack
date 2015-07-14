@@ -264,6 +264,8 @@ If no account is found, revert to the composing message behavior."
 (defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
+        ;; do not hide indexing message
+        mu4e-hide-index-messages nil
         ;; maildir prefix root
         mu4e-maildir mail-pack-mail-root-folder
         ;; skip duplicates by default
