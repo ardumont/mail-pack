@@ -18,35 +18,41 @@
 
 
 (expectations
- ;; case ok
- (expect '(("machine" "email-description") ("machine" "imap.gmail.com") ("machine" "smtp.gmail.com") ("machine" "other-machine"))
-         (with-temp-file "/tmp/.authinfo"
-           (insert "machine email-description\nmachine imap.gmail.com\nmachine smtp.gmail.com\nmachine other-machine")
-           (mail-pack/setup-possible-p "/tmp/.authinfo")))
+  ;; case ok
+  (expect '(("machine" "email-description" "mail" "foo@bar.com" "smtp-server" "blabla.foobar")
+            ("machine" "smtp.gmail.com")
+            ("machine" "other-machine")
+            ("machine" "blabla.foobar" "login" "foo@bar.com" "password" "clear-text-pass"))
+    (with-temp-file "/tmp/.authinfo"
+      (insert "machine email-description mail foo@bar.com smtp-server blabla.foobar\n")
+      (insert "machine smtp.gmail.com\n")
+      (insert "machine other-machine\n")
+      (insert "machine blabla.foobar login foo@bar.com password clear-text-pass")
+      (mail-pack/setup-possible-p "/tmp/.authinfo")))
 
- ;; invalid cases
+  ;; invalid cases
 
- ;; file does not exist
- (expect nil
-         (mail-pack/setup-possible-p "/tmp/.authinfo-that-does-not-exist"))
+  ;; file does not exist
+  (expect nil
+    (mail-pack/setup-possible-p "/tmp/.authinfo-that-does-not-exist"))
 
- ;; missing email-description
- (expect nil
-         (with-temp-file "/tmp/.authinfo"
-           (insert "machine imap.gmail.com\nmachine smtp.gmail.com\nmachine other-machine")
-           (mail-pack/setup-possible-p "/tmp/.authinfo")))
+  ;; missing email-description
+  (expect nil
+    (with-temp-file "/tmp/.authinfo"
+      (insert "machine imap.gmail.com\nmachine smtp.gmail.com\nmachine other-machine")
+      (mail-pack/setup-possible-p "/tmp/.authinfo")))
 
- ;; missing imap.gmail.com
- (expect nil
-         (with-temp-file "/tmp/.authinfo"
-           (insert "machine email-description\nmachine smtp.gmail.com\nmachine other-machine")
-           (mail-pack/setup-possible-p "/tmp/.authinfo")))
+  ;; missing imap.gmail.com
+  (expect nil
+    (with-temp-file "/tmp/.authinfo"
+      (insert "machine email-description\nmachine smtp.gmail.com\nmachine other-machine")
+      (mail-pack/setup-possible-p "/tmp/.authinfo")))
 
- ;; missing smtp.gmail.com
- (expect nil
-         (with-temp-file "/tmp/.authinfo"
-           (insert "machine email-description\nmachine imap.gmail.com\nmachine other-machine")
-           (mail-pack/setup-possible-p "/tmp/.authinfo"))))
+  ;; missing smtp.gmail.com
+  (expect nil
+    (with-temp-file "/tmp/.authinfo"
+      (insert "machine email-description\nmachine imap.gmail.com\nmachine other-machine")
+      (mail-pack/setup-possible-p "/tmp/.authinfo"))))
 
 (expectations
  (expect "some-label" (mail-pack/--label "" "some-label"))

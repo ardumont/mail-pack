@@ -28,6 +28,7 @@
 (require 'dash)
 (require 'dash-functional)
 (require 'f)
+;;(require 'mu4e)
 
 (defcustom mail-pack-rules-default-archive-folder "/archive"
   "Default archive folder if no rules.")
