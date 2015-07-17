@@ -261,6 +261,12 @@ If no account is found, revert to the composing message behavior."
       label
     (format "%s-%s" entry-number label)))
 
+;; (setq mu4e-org-contacts-file  "~/.contacts/org-contacts.org")
+;; (add-to-list 'mu4e-headers-actions
+;;              '("org-contact-add" . mu4e-action-add-org-contact) t)
+;; (add-to-list 'mu4e-view-actions
+;;              '("org-contact-add" . mu4e-action-add-org-contact) t)
+
 (defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
