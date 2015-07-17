@@ -57,21 +57,21 @@
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
-(defun mail-pack--compute-nix-mu4e-home ()
+(defun mail-pack--compute-nix-mail-indexer-home ()
   "Compute mu4e home."
-  (let ((mu-home (let ((coding-system-for-read 'utf-8))
-                   (shell-command "echo $(dirname $(readlink $(which mu)))/..");; UGLY HACK - find the nix way to determine mu's home
+  (let ((mail-indexer-home (let ((coding-system-for-read 'utf-8))
+                   (shell-command "echo $(dirname $(readlink $(which notmuch)))/..");; UGLY HACK - find the nix way to determine mu's home
                    (-> (with-current-buffer "*Shell Command Output*"
                          (buffer-string))
                        s-trim))))
-    (format "%s%s" mu-home "/share/emacs/site-lisp/mu4e")))
+    (format "%s%s" mail-indexer-home "/share/emacs/site-lisp/")))
 
-;; Install mu in your system (deb-based: `sudo aptitude install -y mu`,
-;; nix-based: `nix-env -i mu`) and update the path on your machine to mu4e
-(defcustom mail-pack-mu4e-install-folder (if (file-exists-p "/etc/NIXOS")
-                                             (mail-pack--compute-nix-mu4e-home)
-                                           "/usr/share/emacs/site-lisp/mu4e")
-  "The mu4e installation folder."
+;; Install mu/notmuch in your system (deb-based: `sudo aptitude install -y mu`,
+;; nix-based: `nix-env -i notmuch`) and update the path on your machine to mu4e
+(defcustom mail-pack-mail-indexer-install-folder (if (file-exists-p "/etc/NIXOS")
+                                                     (mail-pack--compute-nix-mail-indexer-home)
+                                                   "/usr/share/emacs/site-lisp/notmuch")
+  "The mail indexer installation folder (mu4e or notmuch for example)."
   :group 'mail-pack)
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
@@ -84,11 +84,6 @@
 This can be plain text too."
   :group 'mail-pack)
 
-(defcustom mail-pack-period-fetch-mail 300
-  "Number of seconds between fetch + indexing.
-Default to 300 seconds."
-  :group 'mail-pack)
-
 (defcustom mail-pack-interactive-choose-account nil
   "Let the user decide which account to use for composing a message.
 If set to nil (automatic), the main account will be automatically chosen.
@@ -97,6 +92,10 @@ Otherwise, interactive, the user will be asked to choose the account to use.
 If only 1 account, this is the chosen account.
 By default 'interactive."
   :group 'mail-pack)
+
+
+(use-package notmuch-crypto
+  :config (custom-set-variables '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be)))
 
 ;; ===================== Static setup (user must not touch this)
 
@@ -114,9 +113,9 @@ By default 'interactive."
 (defun mail-pack/pre-requisites-ok-p! ()
   "Ensure that the needed installation pre-requisites are met.
 Returns nil if problem."
-  (when (file-exists-p mail-pack-mu4e-install-folder)
-    (add-to-list 'load-path mail-pack-mu4e-install-folder)
-    (require 'mu4e)))
+  (when (file-exists-p mail-pack-mail-indexer-install-folder)
+    (add-to-list 'load-path mail-pack-mail-indexer-install-folder)
+    (require 'notmuch)))
 
 (defun mail-pack/setup-possible-p (creds-file)
   "Check if CREDS-FILE exists and contain at least one account.
@@ -223,38 +222,6 @@ If no account is found, revert to the composing message behavior."
             mail-pack/--setup-as-main-account!)
       (error "No email account found!"))))
 
-(defun mail-pack/--setup-keybindings-and-hooks! ()
-  "Install defaults hooks and key bindings."
-  (add-hook 'mu4e-main-mode-hook
-            (lambda ()
-              (define-key 'mu4e-main-mode-map (kbd "u") 'mu4e-update-mail-and-index)
-              (define-key 'mu4e-main-mode-map (kbd "c") 'mu4e-compose-new)
-              (define-key 'mu4e-main-mode-map (kbd "e") 'mu4e-compose-edit)
-              (define-key 'mu4e-main-mode-map (kbd "f") 'mu4e-compose-forward)
-              (define-key 'mu4e-main-mode-map (kbd "r") 'mu4e-compose-reply)))
-
-  (add-hook 'mu4e-headers-mode-hook
-            (lambda ()
-              (define-key 'mu4e-headers-mode-map (kbd "o") 'mu4e-headers-view-message)
-              (define-key 'mu4e-headers-mode-map (kbd "a") 'mu4e-headers-mark-for-refile)
-              (define-key 'mu4e-headers-mode-map (kbd "c") 'mu4e-compose-new)
-              (define-key 'mu4e-headers-mode-map (kbd "e") 'mu4e-compose-edit)
-              (define-key 'mu4e-headers-mode-map (kbd "f") 'mu4e-compose-forward)
-              (define-key 'mu4e-headers-mode-map (kbd "r") 'mu4e-compose-reply)))
-
-  (add-hook 'mu4e-view-mode-hook
-            (lambda ()
-              (define-key 'mu4e-view-mode-map (kbd "A") 'mu4e-view-action)
-              (define-key 'mu4e-view-mode-map (kbd "a") 'mu4e-headers-mark-for-refile)
-              (define-key 'mu4e-view-mode-map (kbd "c") 'mu4e-compose-new)
-              (define-key 'mu4e-view-mode-map (kbd "e") 'mu4e-compose-edit)
-              (define-key 'mu4e-view-mode-map (kbd "f") 'mu4e-compose-forward)
-              (define-key 'mu4e-view-mode-map (kbd "r") 'mu4e-compose-reply)))
-
-  ;; Hook to determine which account to use before composing
-  (add-hook 'mu4e-compose-pre-hook
-            (lambda () (mail-pack/set-account mail-pack-accounts))))
-
 (defun mail-pack/--label (entry-number label)
   "Given an ENTRY-NUMBER, and a LABEL, compute the full label."
   (if (or (null entry-number) (string= "" entry-number))
@@ -270,68 +237,15 @@ If no account is found, revert to the composing message behavior."
 (defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
-        ;; do not hide indexing message
-        mu4e-hide-index-messages nil
-        ;; maildir prefix root
-        mu4e-maildir mail-pack-mail-root-folder
-        ;; skip duplicates by default
-        mu4e-headers-skip-duplicates t
-        ;; auto update headers if changes
-        mu4e-headers-auto-update t
-        ;; default page size
-        mu4e-headers-results-limit 100
-        ;; default sort ordering
-        mu4e~headers-sort-direction 'descending
-        ;; default field ordering
-        mu4e~headers-sort-field :date
-        ;; don't save message to Sent Messages, GMail/IMAP will take care of this
-        mu4e-sent-messages-behavior 'delete
-        ;; allow for updating mail using 'U' in the main view
-        mu4e-get-mail-command "offlineimap"
-        ;; update every 5 min
-        mu4e-update-interval mail-pack-period-fetch-mail
-        ;; inline images directly in the body message
-        mu4e-view-show-images t
-        ;; prefer plain text message
-        mu4e-view-prefer-html nil
-        ;; to convert html to org - prerequisite: `'sudo aptitude install -y pandoc`' or `'nix-env -i pandoc`'
-        ;; mu4e-html2text-command "pandoc -f html -t org"
-        mu4e-html2text-command "w3m -T text/html"
-        ;; see mu4e-header-info for the full list of keywords
-        mu4e-headers-fields '((:human-date    . 16)
-                              (:flags         . 6)
-                              (:from          . 25)
-                              (:to            . 25)
-                              ;; (:mailing-list  . 10)
-                              (:size          . 10)
-                              ;; (:tags          . 10)
-                              (:subject))
-        ;; see format-time-string for the format - here french readable
-        mu4e-headers-date-format "%Y-%m-%d %H:%M"
-        ;; autocomplete address - only consider email addresses that were seen
-        ;; in personal messages (variable: mu4e-user-mail-address-list)
-        mu4e-compose-complete-only-personal nil
-        ;; autocomplete address - addresses
-        mu4e-compose-complete-addresses t
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
         message-send-mail-function 'async-smtpmail-send-it
         ;; no message signature as we use signature-file instead
         message-signature nil
-        mu4e-compose-signature nil
-        ;; auto-include signature
-        mu4e-compose-signature-auto-include nil
         smtpmail-stream-type 'starttls
         starttls-use-gnutls t
         smtpmail-debug-info t
-        smtpmail-debug-verb t
-        ;; empty the hooks (permits to replay setup from scratch)
-        mu4e-headers-mode-hook nil
-        mu4e-main-mode-hook nil
-        mu4e-compose-pre-hook nil)
-  ;; Add bookmarks query
-  (add-to-list 'mu4e-bookmarks '("size:5M..500M" "Big messages" ?b) t)
-  (add-to-list 'mu4e-bookmarks '("date:today..now AND flag:unread AND NOT flag:trashed" "Unread messages from today" ?U)))
+        smtpmail-debug-verb t))
 
 (defun mail-pack/--compute-fullname (firstname surname name)
   "Given the user's FIRSTNAME, SURNAME and NAME, compute the user's fullname."
@@ -394,28 +308,14 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                                      (smtpmail-smtp-service         ,smtp-port)
                                      (smtpmail-default-smtp-server  ,smtp-server)
                                      (smtpmail-smtp-server          ,smtp-server)
-                                     (smtpmail-auth-credentials     ,creds-file)
-                                     ;; mu4e setup
-                                     (mu4e-drafts-folder  ,(concat "/" folder-mail-address draft-folder))
-                                     (mu4e-sent-folder    ,(concat "/" folder-mail-address sent-folder))
-                                     (mu4e-trash-folder   ,(concat "/" folder-mail-address trash-folder))
-                                     (mu4e-attachment-dir ,attachment-folder)
-                                     (mu4e-refile-folder  ,refile-archive-fn)
-                                     ;; setup some handy shortcuts
-                                     (mu4e-maildir-shortcuts ((,(concat "/" folder-mail-address "/INBOX")       . ?i)
-                                                              (,(concat "/" folder-mail-address sent-folder)    . ?s)
-                                                              (,(concat "/" folder-mail-address trash-folder)   . ?t)
-                                                              (,(concat "/" folder-mail-address draft-folder)   . ?d)
-                                                              (,(concat "/" folder-mail-address archive-folder) . ?a))))))
+                                     (smtpmail-auth-credentials     ,creds-file))))
     ;; Sets the main account if it is the one!
     (unless entry-number
       (mail-pack/--setup-as-main-account! account-setup-vars))
     ;; In any case, return the account setup vars
     account-setup-vars))
 
-;; spell check
-;; (setq mu4e-compose-mode-hook)
-(add-hook 'mu4e-compose-mode-hook
+(add-hook 'message-mode-hook
           (lambda ()
             "Settings for message composition."
             (require 'flyspell)
@@ -443,10 +343,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   ;; main account setup
   (add-to-list 'mail-pack-accounts (mail-pack/--setup-account creds-file creds-file-content))
 
-  (custom-set-variables '(mu4e-user-mail-address-list (mapcar (lambda (entry) (cadr (cadr entry))) mail-pack-accounts)))
-
-  ;; install bindings and hooks
-  (mail-pack/--setup-keybindings-and-hooks!))
+  (custom-set-variables '(mu4e-user-mail-address-list (mapcar (lambda (entry) (cadr (cadr entry))) mail-pack-accounts))))
 
 ;; ===================== Starting the mode
 
@@ -492,13 +389,11 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
 (defvar mail-pack-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c e l") 'mail-pack/load-pack!)
-    (define-key map (kbd "C-c e m") 'mu4e)
+    (define-key map (kbd "C-c e m") 'notmuch)
     (define-key map (kbd "C-c e s") 'mail-pack/set-main-account!)
-    (define-key map (kbd "C-c e S") 'mu4e-update-mail-and-index)
     (define-key map (kbd "C-c e d") 'mail-pack/display-current-account)
-    (define-key map (kbd "C-c e u") 'mu4e-update-index)
-    (define-key map (kbd "C-c e i") 'mu4e-interrupt-update-mail)
-    (define-key map (kbd "C-c e c") 'mu4e-compose-new)
+    (define-key map (kbd "C-c e u") 'notmuch-poll)
+    (define-key map (kbd "C-c e c") 'notmuch-mua-new-mail)
     map)
   "Keymap for mail-pack mode.")
 
