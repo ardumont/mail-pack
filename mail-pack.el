@@ -94,9 +94,6 @@ By default 'interactive."
   :group 'mail-pack)
 
 
-(use-package notmuch-crypto
-  :config (custom-set-variables '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be)))
-
 ;; ===================== Static setup (user must not touch this)
 
 (defvar mail-pack-accounts nil "User's email accounts.")
@@ -236,6 +233,8 @@ If no account is found, revert to the composing message behavior."
 
 (defun mail-pack/--common-configuration! ()
   "Install the common configuration between all accounts."
+  (custom-set-variables '(notmuch-search-oldest-first nil)
+                        '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be))
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
@@ -341,9 +340,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                         (add-to-list 'mail-pack-accounts)))))))
 
   ;; main account setup
-  (add-to-list 'mail-pack-accounts (mail-pack/--setup-account creds-file creds-file-content))
-
-  (custom-set-variables '(mu4e-user-mail-address-list (mapcar (lambda (entry) (cadr (cadr entry))) mail-pack-accounts))))
+  (add-to-list 'mail-pack-accounts (mail-pack/--setup-account creds-file creds-file-content)))
 
 ;; ===================== Starting the mode
 
@@ -394,6 +391,7 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
     (define-key map (kbd "C-c e d") 'mail-pack/display-current-account)
     (define-key map (kbd "C-c e u") 'notmuch-poll)
     (define-key map (kbd "C-c e c") 'notmuch-mua-new-mail)
+    (define-key map (kbd "C-c e o") 'notmuch-search-toggle-order)
     map)
   "Keymap for mail-pack mode.")
 
