@@ -244,7 +244,13 @@ If no account is found, revert to the composing message behavior."
         smtpmail-stream-type 'starttls
         starttls-use-gnutls t
         smtpmail-debug-info t
-        smtpmail-debug-verb t))
+        smtpmail-debug-verb t)
+  ;; show-mode
+  (define-key notmuch-show-mode-map "r" 'notmuch-show-reply)
+  (define-key notmuch-show-mode-map "R" 'notmuch-show-reply-sender)
+  ;; search-mode
+  (define-key notmuch-search-mode-map "r" 'notmuch-search-reply-to-thread)
+  (define-key notmuch-search-mode-map "R" 'notmuch-search-reply-to-thread-sender))
 
 (defun mail-pack/--compute-fullname (firstname surname name)
   "Given the user's FIRSTNAME, SURNAME and NAME, compute the user's fullname."
