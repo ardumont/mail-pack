@@ -53,7 +53,6 @@
 (require 'offlineimap)
 (require 'smtpmail-async)
 (require 'google-contacts)
-(require 'mail-pack-rules)
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
