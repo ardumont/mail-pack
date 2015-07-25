@@ -247,9 +247,13 @@ If no account is found, revert to the composing message behavior."
   ;; show-mode
   (define-key notmuch-show-mode-map "r" 'notmuch-show-reply)
   (define-key notmuch-show-mode-map "R" 'notmuch-show-reply-sender)
+  (define-key notmuch-show-mode-map "/" 'notmuch-search)
   ;; search-mode
+  (define-key notmuch-hello-mode-map "/" 'notmuch-search)
+
   (define-key notmuch-search-mode-map "r" 'notmuch-search-reply-to-thread)
-  (define-key notmuch-search-mode-map "R" 'notmuch-search-reply-to-thread-sender))
+  (define-key notmuch-search-mode-map "R" 'notmuch-search-reply-to-thread-sender)
+  (define-key notmuch-search-mode-map "/" 'notmuch-search))
 
 (defun mail-pack/--compute-fullname (firstname surname name)
   "Given the user's FIRSTNAME, SURNAME and NAME, compute the user's fullname."
