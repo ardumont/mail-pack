@@ -248,6 +248,12 @@ If no account is found, revert to the composing message behavior."
   (define-key notmuch-show-mode-map "r" 'notmuch-show-reply)
   (define-key notmuch-show-mode-map "R" 'notmuch-show-reply-sender)
   (define-key notmuch-show-mode-map "/" 'notmuch-search)
+  (define-key notmuch-show-mode-map "b" (lambda (&optional address)
+                                          "Bounce the current message."
+                                          (interactive "sBounce To: ")
+                                          (notmuch-show-view-raw-message)
+                                          (message-resend address)))
+
   ;; search-mode
   (define-key notmuch-hello-mode-map "/" 'notmuch-search)
 
