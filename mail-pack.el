@@ -224,25 +224,25 @@ If no account is found, revert to the composing message behavior."
       label
     (format "%s-%s" entry-number label)))
 
-
 (defun mail-pack--common-configuration! ()
   "Install the common configuration between all accounts."
   (custom-set-variables '(notmuch-search-oldest-first nil)
-                        '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be))
+                        '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be)
+                        '(message-kill-buffer-on-exit t)
+                        ;; SMTP setup ; pre-requisite: gnutls-bin package installed
+                        '(message-send-mail-function 'async-smtpmail-send-it)
+                        ;; no message signature as we use signature-file instead
+                        '(message-signature nil)
+                        '(smtpmail-stream-type 'starttls)
+                        '(starttls-use-gnutls t)
+                        '(smtpmail-debug-info t)
+                        '(smtpmail-debug-verb t))
 
   ;; always sign the entire message
   (add-hook 'message-setup-hook 'mml-secure-message-sign)
 
-  (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
-        message-kill-buffer-on-exit t
-        ;; SMTP setup ; pre-requisite: gnutls-bin package installed
-        message-send-mail-function 'async-smtpmail-send-it
-        ;; no message signature as we use signature-file instead
-        message-signature nil
-        smtpmail-stream-type 'starttls
-        starttls-use-gnutls t
-        smtpmail-debug-info t
-        smtpmail-debug-verb t)
+  (setq gnus-invalid-group-regexp "[:`'\"]\\|^$")
+
   ;; show-mode
   (define-key notmuch-show-mode-map "r" 'notmuch-show-reply)
   (define-key notmuch-show-mode-map "R" 'notmuch-show-reply-sender)
