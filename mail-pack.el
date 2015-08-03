@@ -279,6 +279,8 @@ If no account is found, revert to the composing message behavior."
 
   ;; search-mode
   (define-key notmuch-hello-mode-map "/" 'notmuch-search)
+  (define-key notmuch-hello-mode-map "g" 'notmuch-poll-and-refresh-this-buffer)
+
 
   (define-key notmuch-search-mode-map "r" 'notmuch-search-reply-to-thread)
   (define-key notmuch-search-mode-map "R" 'notmuch-search-reply-to-thread-sender)
