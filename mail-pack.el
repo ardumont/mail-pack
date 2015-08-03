@@ -56,7 +56,7 @@
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
-(defun mail-pack--compute-nix-mail-indexer-home ()
+(defun mail-pack--compute-mail-indexer-home ()
   "Compute mu4e home."
   (let ((mail-indexer-home (let ((coding-system-for-read 'utf-8))
                    (shell-command "echo $(dirname $(readlink $(which notmuch)))/..");; UGLY HACK - find the nix way to determine mu's home
@@ -68,7 +68,7 @@
 ;; Install mu/notmuch in your system (deb-based: `sudo aptitude install -y mu`,
 ;; nix-based: `nix-env -i notmuch`) and update the path on your machine to mu4e
 (defcustom mail-pack-mail-indexer-install-folder (if (file-exists-p "/etc/NIXOS")
-                                                     (mail-pack--compute-nix-mail-indexer-home)
+                                                     (mail-pack--compute-mail-indexer-home)
                                                    "/usr/share/emacs/site-lisp/notmuch")
   "The mail indexer installation folder (mu4e or notmuch for example)."
   :group 'mail-pack)
