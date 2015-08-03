@@ -30,7 +30,6 @@
             (:report-file "/tmp/undercover-report.json"))
 
 (require 'mail-pack)
-(require 'mail-pack-rules)
 
 (provide 'test-helper)
 ;;; test-helper.el ends here
