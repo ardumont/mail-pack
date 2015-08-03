@@ -86,7 +86,7 @@ This can be plain text too."
 (defcustom mail-pack-interactive-choose-account nil
   "Let the user decide which account to use for composing a message.
 If set to nil (automatic), the main account will be automatically chosen.
-To change the main account, use `M-x mail-pack/set-main-account!`.
+To change the main account, use `M-x mail-pack-set-main-account`.
 Otherwise, interactive, the user will be asked to choose the account to use.
 If only 1 account, this is the chosen account.
 By default 'interactive."
@@ -102,18 +102,18 @@ By default 'interactive."
 
 ;; ===================== functions
 
-(defun mail-pack/log (&rest args)
+(defun mail-pack-log (&rest args)
   "Log ARGS with specific pack prefix."
   (apply #'message (format "Mail Pack - %s" (car args)) (cdr args)))
 
-(defun mail-pack/pre-requisites-ok-p! ()
+(defun mail-pack-pre-requisites-ok-p ()
   "Ensure that the needed installation pre-requisites are met.
 Returns nil if problem."
   (when (file-exists-p mail-pack-mail-indexer-install-folder)
     (add-to-list 'load-path mail-pack-mail-indexer-install-folder)
     (require 'notmuch)))
 
-(defun mail-pack/setup-possible-p (creds-file)
+(defun mail-pack-setup-possible-p (creds-file)
   "Check if CREDS-FILE exists and contain at least one account.
 If all is ok, return the creds-file's content, nil otherwise."
   (when (file-exists-p creds-file)
@@ -124,7 +124,7 @@ If all is ok, return the creds-file's content, nil otherwise."
       (when (creds/get-with creds-file-content `(("machine" . ,account-server) ("login" . ,account-email)))
         creds-file-content))))
 
-(defun mail-pack/--nb-accounts (creds-file-content)
+(defun mail-pack--nb-accounts (creds-file-content)
   "In CREDS-FILE-CONTENT, compute how many accounts exist?"
   (--reduce-from (let ((machine (creds/get-entry it "machine")))
                    (if (and machine (string-match-p "email-description" machine))
@@ -133,17 +133,17 @@ If all is ok, return the creds-file's content, nil otherwise."
                  0
                  creds-file-content))
 
-(defun mail-pack/--find-account (emails-sent-to possible-account)
+(defun mail-pack--find-account (emails-sent-to possible-account)
   "Determine the account to use in EMAILS-SENT-TO.
 EMAILS-SENT-TO is the addresses in to, cc, bcc from the message received.
 POSSIBLE-ACCOUNT is the actual accounts setup-ed."
-  (--filter (string= possible-account (mail-pack/--maildir-from-email it)) emails-sent-to))
+  (--filter (string= possible-account (mail-pack--maildir-from-email it)) emails-sent-to))
 
-(defun mail-pack/--compute-composed-message! ()
+(defun mail-pack--compute-composed-message ()
   "Compute the composed message (Delegate this to mu4e)."
   mu4e-compose-parent-message)
 
-(defun mail-pack/--retrieve-account (composed-parent-message possible-accounts)
+(defun mail-pack--retrieve-account (composed-parent-message possible-accounts)
   "Retrieve the mail account to which the COMPOSED-PARENT-MESSAGE was sent to.
 This will look into the :to, :cc, :bcc fields to find the right account.
 POSSIBLE-ACCOUNTS is the actual lists of accounts setup-ed.
@@ -154,54 +154,54 @@ If all accounts are found, return the first encountered." ;; TODO look at mu4e-m
                                                    (plist-get composed-parent-message :cc)
                                                    (plist-get composed-parent-message :bcc)))))
     ;; try to find the accounts the mail was sent to
-    (-when-let (found-accounts (--mapcat (mail-pack/--find-account emails-sent-to it) possible-accounts))
+    (-when-let (found-accounts (--mapcat (mail-pack--find-account emails-sent-to it) possible-accounts))
       ;; return the account found
-      (mail-pack/--maildir-from-email (car found-accounts)))))
+      (mail-pack--maildir-from-email (car found-accounts)))))
 
-(defun mail-pack/--maildir-accounts (accounts)
+(defun mail-pack--maildir-accounts (accounts)
   "Given the ACCOUNTS list, return only the list of possible maildirs."
   (mapcar #'car accounts))
 
-(defun mail-pack/choose-main-account! (possible-accounts)
-  "Permit user to choose an account from the optional ACCOUNT-LIST as main one.
+(defun mail-pack-choose-main-account (possible-accounts)
+  "Permit user to choose an account from the POSSIBLE-ACCOUNTS as main one.
 Return the chosen account."
-  (-if-let (filtered-possible-accounts (-filter (-compose #'not (-partial #'string-equal (mail-pack/current-account))) possible-accounts))
+  (-if-let (filtered-possible-accounts (-filter (-compose #'not (-partial #'string-equal (mail-pack-current-account))) possible-accounts))
       (if (= 1 (length filtered-possible-accounts))
           (car filtered-possible-accounts)
         (completing-read "Compose with account: " filtered-possible-accounts nil t nil nil (car filtered-possible-accounts)))
     (car possible-accounts)))
 
-(defun mail-pack/set-main-account! ()
+(defun mail-pack-set-main-account ()
   "Switch the current account.
 If only one, keep it.
 If 2, switch to the other one.
 Otherwise, let the user decide which account (s)he wants."
   (interactive)
   (let* ((accounts          mail-pack-accounts)
-         (possible-accounts (mail-pack/--maildir-accounts accounts))
-         (account           (mail-pack/choose-main-account! possible-accounts)))
+         (possible-accounts (mail-pack--maildir-accounts accounts))
+         (account           (mail-pack-choose-main-account possible-accounts)))
     (-> account
         (assoc accounts)
-        mail-pack/--setup-as-main-account!)
-    (mail-pack/log "Switch to account: %s" account)))
+        mail-pack--setup-as-main-account)
+    (mail-pack-log "Switch to account: %s" account)))
 
-(defun mail-pack/current-account ()
+(defun mail-pack-current-account ()
   "Compute the current account."
-  (mail-pack/--maildir-from-email user-mail-address))
+  (mail-pack--maildir-from-email user-mail-address))
 
-(defun mail-pack/display-current-account ()
+(defun mail-pack-display-current-account ()
   "Display the current enabled account."
   (interactive)
-  (mail-pack/log "Current: %s" (mail-pack/current-account)))
+  (mail-pack-log "Current: %s" (mail-pack-current-account)))
 
-(defun mail-pack/set-account (accounts)
+(defun mail-pack-set-account (accounts)
   "Set the main account amongst ACCOUNTS.
 When composing a message, in interactive mode, the user chooses the account.
 When composing a message, in automatic mode, the main account is chosen.
 When replying/forwarding, determine automatically the account to use.
 If no account is found, revert to the composing message behavior."
-  (let* ((possible-accounts       (mail-pack/--maildir-accounts accounts))
-         (composed-parent-message (mail-pack/--compute-composed-message!))
+  (let* ((possible-accounts       (mail-pack--maildir-accounts accounts))
+         (composed-parent-message (mail-pack--compute-composed-message))
          ;; when replying/forwarding a message
          (retrieved-account (when composed-parent-message
                               (mail-pack/--retrieve-account composed-parent-message possible-accounts)))
@@ -210,27 +210,22 @@ If no account is found, revert to the composing message behavior."
                               ;; otherwise we need to choose (interactively or automatically) which account to choose
                               (if mail-pack-interactive-choose-account
                                   ;; or let the user choose which account he want to compose its mail
-                                  (mail-pack/choose-main-account! possible-accounts)
-                                (mail-pack/--maildir-from-email user-mail-address)))))
+                                  (mail-pack-choose-main-account possible-accounts)
+                                (mail-pack--maildir-from-email user-mail-address)))))
     (if account
         (-> account
             (assoc accounts)
-            mail-pack/--setup-as-main-account!)
+            mail-pack--setup-as-main-account)
       (error "No email account found!"))))
 
-(defun mail-pack/--label (entry-number label)
+(defun mail-pack--label (entry-number label)
   "Given an ENTRY-NUMBER, and a LABEL, compute the full label."
   (if (or (null entry-number) (string= "" entry-number))
       label
     (format "%s-%s" entry-number label)))
 
-;; (setq mu4e-org-contacts-file  "~/.contacts/org-contacts.org")
-;; (add-to-list 'mu4e-headers-actions
-;;              '("org-contact-add" . mu4e-action-add-org-contact) t)
-;; (add-to-list 'mu4e-view-actions
-;;              '("org-contact-add" . mu4e-action-add-org-contact) t)
 
-(defun mail-pack/--common-configuration! ()
+(defun mail-pack--common-configuration! ()
   "Install the common configuration between all accounts."
   (custom-set-variables '(notmuch-search-oldest-first nil)
                         '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be))
@@ -261,34 +256,34 @@ If no account is found, revert to the composing message behavior."
   (define-key notmuch-search-mode-map "R" 'notmuch-search-reply-to-thread-sender)
   (define-key notmuch-search-mode-map "/" 'notmuch-search))
 
-(defun mail-pack/--compute-fullname (firstname surname name)
+(defun mail-pack--compute-fullname (firstname surname name)
   "Given the user's FIRSTNAME, SURNAME and NAME, compute the user's fullname."
   (cl-flet ((if-null-then-empty (v) (if v v "")))
     (s-trim (format "%s %s %s" (if-null-then-empty firstname) (if-null-then-empty surname) (if-null-then-empty name)))))
 
-(defun mail-pack/--maildir-from-email (mail-address)
+(defun mail-pack--maildir-from-email (mail-address)
   "Compute the maildir (without its root folder) from the MAIL-ADDRESS."
   (car (s-split "@" mail-address)))
 
-(defun mail-pack/--setup-as-main-account! (account-setup-vars)
+(defun mail-pack--setup-as-main-account (account-setup-vars)
   "Given the entry ACCOUNT-SETUP-VARS, set the main account vars up."
   (mapc #'(lambda (var) (set (car var) (cadr var))) (cdr account-setup-vars)))
 
-(defun mail-pack/refile-msg (default-folder)
+(defun mail-pack-refile-msg (default-folder)
   "Compute the refiling folder with default DEFAULT-FOLDER.
 ARCHIVE-FOLDER is the catch-all folder."
   (lexical-let ((archive-folder default-folder))
     (lambda (msg)
       (mail-pack-rules-filter-msg msg archive-folder))))
 
-(defun mail-pack/--setup-account (creds-file creds-file-content &optional entry-number)
+(defun mail-pack--setup-account (creds-file creds-file-content &optional entry-number)
   "Setup an account and return the key values structure.
 CREDS-FILE represents the credentials file.
 CREDS-FILE-CONTENT is the content of that same file.
 ENTRY-NUMBER is the optional account number (multiple accounts setup possible).
 When ENTRY-NUMBER is nil, the account to set up is considered the main account."
-  (let* ((description-entry        (creds/get creds-file-content (mail-pack/--label entry-number "email-description")))
-         (full-name                (mail-pack/--compute-fullname (creds/get-entry description-entry "firstname")
+  (let* ((description-entry        (creds/get creds-file-content (mail-pack--label entry-number "email-description")))
+         (full-name                (mail-pack--compute-fullname (creds/get-entry description-entry "firstname")
                                                                  (creds/get-entry description-entry "surname")
                                                                  (creds/get-entry description-entry "name")))
          (x-url                    (creds/get-entry description-entry "x-url"))
@@ -303,9 +298,9 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
          (attachment-folder        (creds/get-entry description-entry "attachment-folder"))
          (smtp-server-entry        (creds/get-with creds-file-content `(("machine" . ,smtp-server) ("login" . ,mail-address))))
          (smtp-port                (creds/get-entry smtp-server-entry "port"))
-         (folder-mail-address      (mail-pack/--maildir-from-email mail-address))
+         (folder-mail-address      (mail-pack--maildir-from-email mail-address))
          (folder-root-mail-address (format "%s/%s" mail-pack-mail-root-folder folder-mail-address))
-         (refile-archive-fn        (mail-pack/refile-msg archive-folder))
+         (refile-archive-fn        (mail-pack-refile-msg archive-folder))
          ;; setup the account
          (account-setup-vars       `(,folder-mail-address
                                      ;; Global setup
@@ -325,7 +320,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
                                      (smtpmail-auth-credentials     ,creds-file))))
     ;; Sets the main account if it is the one!
     (unless entry-number
-      (mail-pack/--setup-as-main-account! account-setup-vars))
+      (mail-pack--setup-as-main-account account-setup-vars))
     ;; In any case, return the account setup vars
     account-setup-vars))
 
@@ -336,30 +331,30 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
             (set-fill-column 72)
             (turn-on-flyspell)))
 
-(defun mail-pack/setup (creds-file creds-file-content)
+(defun mail-pack-setup (creds-file creds-file-content)
   "Mail pack setup with the CREDS-FILE path and the CREDS-FILE-CONTENT."
   ;; common setup
-  (mail-pack/--common-configuration!)
+  (mail-pack--common-configuration!)
 
   ;; reinit the accounts list
   (setq mail-pack-accounts)
 
   ;; secondary accounts setup
-  (-when-let (nb-accounts (mail-pack/--nb-accounts creds-file-content))
+  (-when-let (nb-accounts (mail-pack--nb-accounts creds-file-content))
     (when (< 1 nb-accounts)
       (->> (number-sequence 2 nb-accounts)
            (mapc (lambda (account-entry-number)
                    (->> account-entry-number
                         (format "%s")
-                        (mail-pack/--setup-account creds-file creds-file-content)
+                        (mail-pack--setup-account creds-file creds-file-content)
                         (add-to-list 'mail-pack-accounts)))))))
 
   ;; main account setup
-  (add-to-list 'mail-pack-accounts (mail-pack/--setup-account creds-file creds-file-content)))
+  (add-to-list 'mail-pack-accounts (mail-pack--setup-account creds-file creds-file-content)))
 
 ;; ===================== Starting the mode
 
-(defun mail-pack/load-pack! ()
+(defun mail-pack-load-pack ()
   "Mail pack loading routine.
 This will check if the pre-requisite are met.
 If ok, then checks if an account file exists the minimum required (1 account).
@@ -369,13 +364,13 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
   ;; run user defined hooks
   (run-hooks 'mail-pack/setup-hooks)
   ;; at last the checks and load pack routine
-  (if (mail-pack/pre-requisites-ok-p!)
-      (-if-let (creds-file-content (mail-pack/setup-possible-p mail-pack-credentials-file))
+  (if (mail-pack-pre-requisites-ok-p)
+      (-if-let (creds-file-content (mail-pack-setup-possible-p mail-pack-credentials-file))
           (progn
-            (mail-pack/log (concat mail-pack-credentials-file " found! Running Setup..."))
-            (mail-pack/setup mail-pack-credentials-file creds-file-content)
-            (mail-pack/log "Setup done!"))
-        (mail-pack/log
+            (mail-pack-log (concat mail-pack-credentials-file " found! Running Setup..."))
+            (mail-pack-setup mail-pack-credentials-file creds-file-content)
+            (mail-pack-log "Setup done!"))
+        (mail-pack-log
          (concat
           "You need to setup your credentials file " mail-pack-credentials-file " for this to work. (The credentials file can be secured with gpg or not).\n"
           "\n"
@@ -394,16 +389,16 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
           "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.\n"
           "Whatever you choose, reference the file you use in your emacs configuration:\n"
           "(setq mail-pack-credentials-file (expand-file-name \"~/.authinfo\"))")))
-    (mail-pack/log "As a pre-requisite, you need to install the offlineimap and mu packages.
+    (mail-pack-log "As a pre-requisite, you need to install the offlineimap and mu packages.
 For example, on debian-based system, `sudo aptitude install -y offlineimap mu`...
 When mu is installed, you also need to reference the mu4e (installed with mu) installation folder for this pack to work.")))
 
 (defvar mail-pack-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c e l") 'mail-pack/load-pack!)
+    (define-key map (kbd "C-c e l") 'mail-pack-load-pack)
     (define-key map (kbd "C-c e m") 'notmuch)
-    (define-key map (kbd "C-c e s") 'mail-pack/set-main-account!)
-    (define-key map (kbd "C-c e d") 'mail-pack/display-current-account)
+    (define-key map (kbd "C-c e s") 'mail-pack-set-main-account)
+    (define-key map (kbd "C-c e d") 'mail-pack-display-current-account)
     (define-key map (kbd "C-c e u") 'notmuch-poll)
     (define-key map (kbd "C-c e c") 'notmuch-mua-new-mail)
     (define-key map (kbd "C-c e o") 'notmuch-search-toggle-order)
