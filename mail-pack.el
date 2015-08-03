@@ -236,7 +236,37 @@ If no account is found, revert to the composing message behavior."
                         '(smtpmail-stream-type 'starttls)
                         '(starttls-use-gnutls t)
                         '(smtpmail-debug-info t)
-                        '(smtpmail-debug-verb t))
+                        '(smtpmail-debug-verb t)
+                        '(notmuch-saved-searches '((:name "inbox"
+                                                          :query "tag:inbox"
+                                                          :count-query "tag:inbox"
+                                                          :sort-order 'newest-first
+                                                          :key "i")
+                                                   (:name "unread"
+                                                          :query "tag:inbox"
+                                                          :count-query "tag:inbox and tag:unread"
+                                                          :sort-order 'newest-first
+                                                          :key "u")
+                                                   (:name "flagged"
+                                                          :query "tag:flagged"
+                                                          :count-query "tag:flagged"
+                                                          :sort-order 'newest-first
+                                                          :key "f")
+                                                   (:name "sent"
+                                                          :query "tag:sent"
+                                                          :count-query "tag:sent"
+                                                          :sort-order 'newest-first
+                                                          :key "t")
+                                                   (:name "drafts"
+                                                          :query "tag:draft"
+                                                          :count-query "tag:draft"
+                                                          :sort-order 'newest-first
+                                                          :key "d")
+                                                   (:name "all mail"
+                                                          :query "*"
+                                                          :count-query "*"
+                                                          :sort-order 'newest-first
+                                                          :key "a"))))
 
   ;; always sign the entire message
   (add-hook 'message-setup-hook 'mml-secure-message-sign)
