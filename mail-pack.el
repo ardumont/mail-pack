@@ -133,12 +133,6 @@ If all is ok, return the creds-file's content, nil otherwise."
                  0
                  creds-file-content))
 
-(defun mail-pack--find-account (emails-sent-to possible-account)
-  "Determine the account to use in EMAILS-SENT-TO.
-EMAILS-SENT-TO is the addresses in to, cc, bcc from the message received.
-POSSIBLE-ACCOUNT is the actual accounts setup-ed."
-  (--filter (string= possible-account (mail-pack--maildir-from-email it)) emails-sent-to))
-
 (defun mail-pack--compute-composed-message ()
   "Compute the composed message (Delegate this to mu4e)."
   mu4e-compose-parent-message)
