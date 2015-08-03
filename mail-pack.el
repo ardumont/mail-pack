@@ -97,8 +97,8 @@ By default 'interactive."
 
 (defvar mail-pack-accounts nil "User's email accounts.")
 
-(defvar mail-pack/setup-hooks nil "Use hooks for user to set their setup override.")
-(setq mail-pack/setup-hooks) ;; reset hooks
+(defvar mail-pack-setup-hooks nil "Use hooks for user to set their setup override.")
+(setq mail-pack-setup-hooks) ;; reset hooks
 
 ;; ===================== functions
 
@@ -198,7 +198,7 @@ If no account is found, revert to the composing message behavior."
          (composed-parent-message (mail-pack--compute-composed-message))
          ;; when replying/forwarding a message
          (retrieved-account (when composed-parent-message
-                              (mail-pack/--retrieve-account composed-parent-message possible-accounts)))
+                              (mail-pack--retrieve-account composed-parent-message possible-accounts)))
          (account           (if retrieved-account
                                 retrieved-account
                               ;; otherwise we need to choose (interactively or automatically) which account to choose
@@ -218,7 +218,7 @@ If no account is found, revert to the composing message behavior."
       label
     (format "%s-%s" entry-number label)))
 
-(defun mail-pack--common-configuration! ()
+(defun mail-pack--common-configuration ()
   "Install the common configuration between all accounts."
   (custom-set-variables '(notmuch-search-oldest-first nil)
                         '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be)
@@ -362,7 +362,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
 (defun mail-pack-setup (creds-file creds-file-content)
   "Mail pack setup with the CREDS-FILE path and the CREDS-FILE-CONTENT."
   ;; common setup
-  (mail-pack--common-configuration!)
+  (mail-pack--common-configuration)
 
   ;; reinit the accounts list
   (setq mail-pack-accounts)
@@ -390,7 +390,7 @@ If ok then do the actual loading.
 Otherwise, will log an error message with what's wrong to help the user fix it."
   (interactive)
   ;; run user defined hooks
-  (run-hooks 'mail-pack/setup-hooks)
+  (run-hooks 'mail-pack-setup-hooks)
   ;; at last the checks and load pack routine
   (if (mail-pack-pre-requisites-ok-p)
       (-if-let (creds-file-content (mail-pack-setup-possible-p mail-pack-credentials-file))
