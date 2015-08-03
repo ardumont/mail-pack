@@ -229,6 +229,10 @@ If no account is found, revert to the composing message behavior."
   "Install the common configuration between all accounts."
   (custom-set-variables '(notmuch-search-oldest-first nil)
                         '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be))
+
+  ;; always sign the entire message
+  (add-hook 'message-setup-hook 'mml-secure-message-sign)
+
   (setq gnus-invalid-group-regexp "[:`'\"]\\|^$"
         message-kill-buffer-on-exit t
         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
