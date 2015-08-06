@@ -433,6 +433,7 @@ When mu is installed, you also need to reference the mu4e (installed with mu) in
     (define-key map (kbd "C-c e u") 'notmuch-poll)
     (define-key map (kbd "C-c e c") 'notmuch-mua-new-mail)
     (define-key map (kbd "C-c e o") 'notmuch-search-toggle-order)
+    (define-key map (kbd "C-c e f")  'offlineimap)
     map)
   "Keymap for mail-pack mode.")
 
