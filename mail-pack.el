@@ -420,9 +420,9 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
           "Optional: Then `M-x encrypt-epa-file` to generate the required ~/.authinfo.gpg and remove ~/.authinfo.\n"
           "Whatever you choose, reference the file you use in your emacs configuration:\n"
           "(setq mail-pack-credentials-file (expand-file-name \"~/.authinfo\"))")))
-    (mail-pack-log "As a pre-requisite, you need to install the offlineimap and mu packages.
-For example, on debian-based system, `sudo aptitude install -y offlineimap mu`...
-When mu is installed, you also need to reference the mu4e (installed with mu) installation folder for this pack to work.")))
+    (mail-pack-log "As a pre-requisite, you need to install the offlineimap and notmuch packages.
+For example, on debian-based system, `sudo aptitude install -y offlineimap notmuch`...
+When notmuch is installed, you also need to reference the notmuch installation folder for this pack to work.")))
 
 (defvar mail-pack-mode-map
   (let ((map (make-sparse-keymap)))
