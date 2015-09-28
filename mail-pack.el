@@ -67,9 +67,7 @@
 
 ;; Install mu/notmuch in your system (deb-based: `sudo aptitude install -y mu`,
 ;; nix-based: `nix-env -i notmuch`) and update the path on your machine to mu4e
-(defcustom mail-pack-mail-indexer-install-folder (if (file-exists-p "/etc/NIXOS")
-                                                     (mail-pack--compute-mail-indexer-home)
-                                                   "/usr/share/emacs/site-lisp/notmuch")
+(defcustom mail-pack-mail-indexer-install-folder (mail-pack--compute-mail-indexer-home)
   "The mail indexer installation folder (mu4e or notmuch for example)."
   :group 'mail-pack)
 
