@@ -59,10 +59,10 @@
 (defun mail-pack--compute-mail-indexer-home ()
   "Compute mu4e home."
   (let ((mail-indexer-home (let ((coding-system-for-read 'utf-8))
-                   (shell-command "echo $(dirname $(readlink $(which notmuch)))/..");; UGLY HACK - find the nix way to determine mu's home
-                   (-> (with-current-buffer "*Shell Command Output*"
-                         (buffer-string))
-                       s-trim))))
+                             (shell-command "echo $(dirname $(readlink $(which notmuch)))/..");; UGLY HACK - find the nix way to determine indexer's home
+                             (-> (with-current-buffer "*Shell Command Output*"
+                                   (buffer-string))
+                                 s-trim))))
     (format "%s%s" mail-indexer-home "/share/emacs/site-lisp/")))
 
 ;; Install mu/notmuch in your system (deb-based: `sudo aptitude install -y mu`,
