@@ -58,15 +58,21 @@
 
 (defun mail-pack--compute-mail-indexer-home ()
   "Compute mu4e home."
-  (let ((mail-indexer-home (let ((coding-system-for-read 'utf-8))
-                             (shell-command "echo $(dirname $(readlink $(which notmuch)))/..");; UGLY HACK - find the nix way to determine indexer's home
-                             (-> (with-current-buffer "*Shell Command Output*"
-                                   (buffer-string))
-                                 s-trim))))
-    (format "%s%s" mail-indexer-home "/share/emacs/site-lisp/")))
+  (let ((default-mail-indexer-home "/usr/share/emacs24/site-lisp/")
+        (coding-system-for-read 'utf-8))
+    (if (string-equal system-type "gnu/linux")
+        (if (file-exists-p "/etc/NIXOS") ;; debian version
+            (progn                       ;; nixos
+              (shell-command-to-string "echo $(dirname $(readlink -f $(which notmuch)))/..") ;; UGLY HACK - find the nix way to determine indexer's home
+              (-> (with-current-buffer "*Shell Command Output*"
+                    (buffer-string))
+                  s-trim))
+          default-mail-indexer-home)
+      (mail-pack-log "Can't determine where your notmuch installation is set\nDefaulting to debian's.\nPlease, set it yourself.")
+      default-mail-indexer-home)))
 
-;; Install mu/notmuch in your system (deb-based: `sudo aptitude install -y mu`,
-;; nix-based: `nix-env -i notmuch`) and update the path on your machine to mu4e
+;; Install mu/notmuch in your system (deb-based: `sudo apt-get install -y mu notmuch`,
+;; nix-based: `nix-env -i mu notmuch`) and update the path on your machine to mu4e/notmuch
 (defcustom mail-pack-mail-indexer-install-folder (mail-pack--compute-mail-indexer-home)
   "The mail indexer installation folder (mu4e or notmuch for example)."
   :group 'mail-pack)
