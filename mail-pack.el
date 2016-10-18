@@ -102,7 +102,7 @@ By default 'interactive."
 (defvar mail-pack-accounts nil "User's email accounts.")
 
 (defvar mail-pack-setup-hooks nil "Use hooks for user to set their setup override.")
-(setq mail-pack-setup-hooks) ;; reset hooks
+(setq mail-pack-setup-hooks nil) ;; reset hooks
 
 ;; ===================== functions
 
@@ -372,7 +372,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   (mail-pack--common-configuration)
 
   ;; reinit the accounts list
-  (setq mail-pack-accounts)
+  (setq mail-pack-accounts nil)
 
   ;; secondary accounts setup
   (-when-let (nb-accounts (mail-pack--nb-accounts creds-file-content))
