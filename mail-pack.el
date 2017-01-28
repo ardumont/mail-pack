@@ -57,8 +57,8 @@
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
 (defun mail-pack--compute-mail-indexer-home ()
-  "Compute mu4e home."
-  (let ((default-mail-indexer-home "/usr/share/emacs24/site-lisp/")
+  "Compute default home folder for the mailer client."
+  (let ((default-mail-indexer-home (format "/usr/share/emacs%s/site-lisp/" emacs-major-version))
         (coding-system-for-read 'utf-8))
     (if (string-equal system-type "gnu/linux")
         (if (file-exists-p "/etc/NIXOS") ;; debian version
