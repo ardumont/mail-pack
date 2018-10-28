@@ -285,6 +285,10 @@ If no account is found, revert to the composing message behavior."
                                           (interactive "sBounce To: ")
                                           (notmuch-show-view-raw-message)
                                           (message-resend address)))
+  (define-key notmuch-show-mode-map "S" (lambda () (interactive)
+                                          (notmuch-show-tag (list "+spam" "-inbox"))))
+  (define-key notmuch-show-mode-map "d" (lambda () (interactive)
+                                          (notmuch-show-tag (list "+deleted" "-inbox"))))
 
   ;; search-mode
   (define-key notmuch-hello-mode-map "/" 'notmuch-search)
@@ -294,7 +298,11 @@ If no account is found, revert to the composing message behavior."
 
   (define-key notmuch-search-mode-map "r" 'notmuch-search-reply-to-thread)
   (define-key notmuch-search-mode-map "R" 'notmuch-search-reply-to-thread-sender)
-  (define-key notmuch-search-mode-map "/" 'notmuch-search))
+  (define-key notmuch-search-mode-map "/" 'notmuch-search)
+  (define-key notmuch-search-mode-map "S" (lambda () (interactive)
+                                            (notmuch-search-tag (list "+spam" "-inbox"))))
+  (define-key notmuch-search-mode-map "d" (lambda () (interactive)
+                                            (notmuch-search-tag (list "+deleted" "-inbox")))))
 
 (defun mail-pack--compute-fullname (firstname surname name)
   "Given the user's FIRSTNAME, SURNAME and NAME, compute the user's fullname."
