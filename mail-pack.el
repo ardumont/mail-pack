@@ -246,7 +246,7 @@ If no account is found, revert to the composing message behavior."
                                                           :sort-order 'newest-first
                                                           :key "i")
                                                    (:name "unread"
-                                                          :query "tag:inbox"
+                                                          :query "tag:inbox and tag:unread"
                                                           :count-query "tag:inbox and tag:unread"
                                                           :sort-order 'newest-first
                                                           :key "u")
