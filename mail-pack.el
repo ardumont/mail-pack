@@ -58,7 +58,7 @@
 
 (defun mail-pack--compute-mail-indexer-home ()
   "Compute default home folder for the mailer client."
-  (let ((default-mail-indexer-home (format "/usr/share/emacs%s/site-lisp/" emacs-major-version))
+  (let ((default-mail-indexer-home (format "/usr/share/emacs/%s.%s/site-lisp/" emacs-major-version emacs-minor-version))
         (coding-system-for-read 'utf-8))
     (if (string-equal system-type "gnu/linux")
         (if (file-exists-p "/etc/NIXOS") ;; debian version
