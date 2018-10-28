@@ -433,31 +433,6 @@ Otherwise, will log an error message with what's wrong to help the user fix it."
 For example, on debian-based system, `sudo aptitude install -y offlineimap notmuch`...
 When notmuch is installed, you also need to reference the notmuch installation folder for this pack to work.")))
 
-(require 'notmuch-labeler)
-
-;; Then, you will get hyperlinks on all your labels.
-;; Then, to rename the label "unread" to "new" and change the label's color to blue, add the following to your init file:
-;; (notmuch-labeler-rename "unread" "new" ':foreground "blue")
-(notmuch-labeler-rename "inbox" "inbox" ':foreground "yellow")
-(notmuch-labeler-rename "new" "new" ':foreground "yellow")
-(notmuch-labeler-rename "unread" "unread" ':foreground "red")
-(notmuch-labeler-rename "replied" "replied" ':foreground "magenta")
-(notmuch-labeler-rename "lists" "lists" ':foreground "orange")
-(notmuch-labeler-rename "signed" "signed" ':foreground "red")
-(notmuch-labeler-rename "encrypted" "encrypted" ':foreground "red")
-
-;; You can replace the label "important" by a tag picture with the following:
-
-;; (notmuch-labeler-image-tag "important")
-
-;; You can also use your own picture with the following:
-
-;; (notmuch-labeler-image "important" "/path/to/picture.svg" 'svg)
-
-;; Finally, you can hide the label "unread" with this code:
-
-;; (notmuch-labeler-hide "unread")
-
 (defvar mail-pack-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c e l") 'mail-pack-load-pack)
