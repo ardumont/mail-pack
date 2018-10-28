@@ -265,6 +265,16 @@ If no account is found, revert to the composing message behavior."
                                                           :count-query "tag:draft"
                                                           :sort-order 'newest-first
                                                           :key "d")
+                                                   (:name "deleted"
+                                                          :query "tag:deleted"
+                                                          :count-query "tag:deleted"
+                                                          :sort-order 'newest-first
+                                                          :key "D")
+                                                   (:name "spam"
+                                                          :query "tag:spam"
+                                                          :count-query "tag:spam"
+                                                          :sort-order 'newest-first
+                                                          :key "s")
                                                    (:name "all mail"
                                                           :query "*"
                                                           :count-query "*"
