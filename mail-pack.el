@@ -225,6 +225,7 @@ If no account is found, revert to the composing message behavior."
 (defun mail-pack--common-configuration ()
   "Install the common configuration between all accounts."
   (custom-set-variables '(notmuch-search-oldest-first nil)
+                        '(notmuch-show-indent-content nil)
                         '(notmuch-crypto-process-mime 'do-verify-signature-and-decrypt-mail-if-need-be)
                         '(message-kill-buffer-on-exit t)
                         ;; SMTP setup ; pre-requisite: gnutls-bin package installed
