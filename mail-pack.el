@@ -53,6 +53,10 @@
 (require 'offlineimap)
 (require 'smtpmail-async)
 (require 'google-contacts)
+(require 'notmuch)
+
+(custom-set-faces
+ '(notmuch-search-unread-face ((t nil))))
 
 ;; ===================== User setup (user can touch this, the preferred approach it to define a hook to override those values)
 
@@ -441,11 +445,6 @@ When notmuch is installed, you also need to reference the notmuch installation f
 (notmuch-labeler-rename "lists" "lists" ':foreground "orange")
 (notmuch-labeler-rename "signed" "signed" ':foreground "red")
 (notmuch-labeler-rename "encrypted" "encrypted" ':foreground "red")
-
-(require 'notmuch)
-(custom-set-variables '(notmuch-search-oldest-first nil))
-(custom-set-faces
- '(notmuch-search-unread-face ((t nil))))
 
 ;; You can replace the label "important" by a tag picture with the following:
 
