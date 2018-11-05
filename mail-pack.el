@@ -274,12 +274,7 @@ If no account is found, revert to the composing message behavior."
                                                           :query "tag:spam"
                                                           :count-query "tag:spam"
                                                           :sort-order 'newest-first
-                                                          :key "s")
-                                                   (:name "all mail"
-                                                          :query "*"
-                                                          :count-query "*"
-                                                          :sort-order 'newest-first
-                                                          :key "a"))))
+                                                          :key "s"))))
 
   ;; always sign the entire message
   (add-hook 'message-setup-hook 'mml-secure-message-sign)
