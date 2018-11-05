@@ -244,6 +244,7 @@ If no account is found, revert to the composing message behavior."
                                                           :query "tag:inbox"
                                                           :count-query "tag:inbox"
                                                           :sort-order 'newest-first
+                                                          :limit 40
                                                           :key "i")
                                                    (:name "unread"
                                                           :query "tag:inbox and tag:unread"
