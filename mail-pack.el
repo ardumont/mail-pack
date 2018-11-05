@@ -408,6 +408,7 @@ When ENTRY-NUMBER is nil, the account to set up is considered the main account."
 
 ;; ===================== Starting the mode
 
+;;;###autoload
 (defun mail-pack-load-pack ()
   "Mail pack loading routine.
 This will check if the pre-requisite are met.
