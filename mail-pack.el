@@ -77,6 +77,7 @@
 
 ;; Install mu/notmuch in your system (deb-based: `sudo apt-get install -y mu notmuch`,
 ;; nix-based: `nix-env -i mu notmuch`) and update the path on your machine to mu4e/notmuch
+;; That custom could be nil if there is no need for overriding the load-path (e.g el-get)
 (defcustom mail-pack-mail-indexer-install-folder (mail-pack--compute-mail-indexer-home)
   "The mail indexer installation folder (mu4e or notmuch for example)."
   :group 'mail-pack)
@@ -117,9 +118,9 @@ By default 'interactive."
 (defun mail-pack-pre-requisites-ok-p ()
   "Ensure that the needed installation pre-requisites are met.
 Returns nil if problem."
-  (when (file-exists-p mail-pack-mail-indexer-install-folder)
-    (add-to-list 'load-path mail-pack-mail-indexer-install-folder)
-    (require 'notmuch)))
+  (when (and mail-pack-mail-indexer-install-folder (file-exists-p mail-pack-mail-indexer-install-folder))
+    (add-to-list 'load-path mail-pack-mail-indexer-install-folder))
+  (require 'notmuch))
 
 (defun mail-pack-setup-possible-p (creds-file)
   "Check if CREDS-FILE exists and contain at least one account.
