@@ -469,7 +469,8 @@ When notmuch is installed, you also need to reference the notmuch installation f
 
 \\{mail-pack-mode-map}"
   :lighter " MP"
-  :keymap mail-pack-mode-map)
+  :keymap mail-pack-mode-map
+  :global t)
 
 (define-globalized-minor-mode global-mail-pack-mode mail-pack-mode mail-pack-on)
 
