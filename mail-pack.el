@@ -44,7 +44,6 @@
 ;; Internal libs
 (require 'gnus)
 (require 'epa-file)
-(require 'smtpmail)
 
 ;; External libs - installed from marmalade/melpa
 (require 'creds)
@@ -52,7 +51,7 @@
 (require 's)
 (require 'offlineimap)
 (require 'smtpmail-async)
-(require 'google-contacts)
+;;(require 'google-contacts)
 (require 'notmuch)
 
 (custom-set-faces
