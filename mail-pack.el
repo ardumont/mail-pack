@@ -339,8 +339,8 @@ ENTRY-NUMBER is the optional account number (multiple accounts setup possible).
 When ENTRY-NUMBER is nil, the account to set up is considered the main account."
   (let* ((description-entry        (creds/get creds-file-content (mail-pack--label entry-number "email-description")))
          (full-name                (mail-pack--compute-fullname (creds/get-entry description-entry "firstname")
-                                                                 (creds/get-entry description-entry "surname")
-                                                                 (creds/get-entry description-entry "name")))
+                                                                (creds/get-entry description-entry "surname")
+                                                                (creds/get-entry description-entry "name")))
          (x-url                    (creds/get-entry description-entry "x-url"))
          (mail-host                (creds/get-entry description-entry "mail-host"))
          (signature                (creds/get-entry description-entry "signature-file"))
