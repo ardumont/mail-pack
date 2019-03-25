@@ -62,25 +62,18 @@
 
 (defun mail-pack--compute-mail-indexer-home ()
   "Compute default home folder for the mailer client."
-  (let ((default-mail-indexer-home (format "/usr/share/emacs/%s.%s/site-lisp/" emacs-major-version emacs-minor-version))
-        (coding-system-for-read 'utf-8))
-    (if (string-equal system-type "gnu/linux")
-        (if (file-exists-p "/etc/NIXOS") ;; debian version
-            (progn                       ;; nixos
-              (shell-command-to-string "echo $(dirname $(readlink -f $(which notmuch)))/..") ;; UGLY HACK - find the nix way to determine indexer's home
-              (-> (with-current-buffer "*Shell Command Output*"
-                    (buffer-string))
-                  s-trim))
-          default-mail-indexer-home)
-      (mail-pack-log "Can't determine where your notmuch installation is set\nDefaulting to debian's.\nPlease, set it yourself.")
-      default-mail-indexer-home)))
+  ;; UGLY HACK - find the nix way to determine indexer's home
+  (let ((coding-system-for-read 'utf-8))
+    (-> (shell-command-to-string "echo $(dirname $(readlink -f $(which notmuch)))/..")
+	s-trim)))
 
 ;; Install mu/notmuch in your system (deb-based: `sudo apt-get install -y mu notmuch`,
 ;; nix-based: `nix-env -i mu notmuch`) and update the path on your machine to mu4e/notmuch
 ;; That custom could be nil if there is no need for overriding the load-path (e.g el-get)
-(defcustom mail-pack-mail-indexer-install-folder (mail-pack--compute-mail-indexer-home)
+(defcustom mail-pack-mail-indexer-install-folder nil
   "The mail indexer installation folder (mu4e or notmuch for example)."
   :group 'mail-pack)
+(setq mail-pack-mail-indexer-install-folder (mail-pack--compute-mail-indexer-home))
 
 ;; create your .authinfo file and and encrypt it in ~/.authinfo.gpg with M-x epa-encrypt-file
 (defcustom mail-pack-mail-root-folder (expand-file-name "~/.mails")
